@@ -1,0 +1,626 @@
+{
+	"acqpar": [
+		{
+			"ScanningSequence": "GR",
+			"SequenceVariant": "SP",
+			"ScanOptions": "PFP\\SAT1",
+			"MRAcquisitionType": "3D",
+			"SequenceName": "*me3d1r6",
+			"AngioFlag": "N ",
+			"SliceThickness": 5,
+			"RepetitionTime": 44,
+			"EchoTime": 19,
+			"NumberOfAverages": 1,
+			"ImagingFrequency": 123.212184,
+			"ImagedNucleus": "1H",
+			"EchoNumbers": 1,
+			"MagneticFieldStrength": 3,
+			"NumberOfPhaseEncodingSteps": 283,
+			"EchoTrainLength": 1,
+			"PercentSampling": 100,
+			"PercentPhaseFieldOfView": 84.375,
+			"PixelBandwidth": 260,
+			"DeviceSerialNumber": "40635 ",
+			"SoftwareVersions": "syngo MR B17",
+			"ProtocolName": "medic_sat ",
+			"TransmitCoilName": "Body",
+			"AcquisitionMatrix": [0,384,324,0],
+			"InPlanePhaseEncodingDirection": "ROW ",
+			"FlipAngle": 11,
+			"VariableFlipAngleFlag": "N ",
+			"SamplesPerPixel": 1,
+			"PhotometricInterpretation": "MONOCHROME2 ",
+			"Rows": 384,
+			"Columns": 324,
+			"PixelSpacing": [0.5,0.5],
+			"BitsAllocated": 16,
+			"BitsStored": 12,
+			"HighBit": 11,
+			"PixelRepresentation": 0,
+			"SmallestImagePixelValue": 3,
+			"LargestImagePixelValue": 296,
+			"WindowCenter": 98,
+			"WindowWidth": 260,
+			"WindowCenterWidthExplanation": "Algo1 ",
+			"PrivateCreatorCode": "SIEMENS CSA HEADER",
+			"AnotherPrivateCreatorCode": "SIEMENS MEDCOM HEADER2",
+			"CSAImageHeaderType": "IMAGE NUM 4 ",
+			"CSAImageHeaderVersion": "20161130",
+			"CSAImageHeaderInfo": {
+				"EchoLinePosition": 162,
+				"EchoColumnPosition": 192,
+				"EchoPartitionPosition": 5,
+				"UsedChannelMask": 15,
+				"Actual3DImaPartNumber": 0,
+				"ICE_Dims": "X_1_1_1_1_1_1_1_1_1_1_1_83",
+				"ProtocolSliceNumber": 0,
+				"RealDwellTime": 5000,
+				"SliceMeasurementDuration": 58200,
+				"SequenceMask": 134217728,
+				"AcquisitionMatrixText": "324p*384",
+				"MeasuredFourierLines": 0,
+				"PhaseEncodingDirectionPositive": 1,
+				"ImaAbsTablePosition": [0,0,-1108],
+				"NonPlanarImage": 0,
+				"SlicePosition_PCS": [-93.37031317,-58.43671192,-152.48809344],
+				"MultistepIndex": 0,
+				"ImaRelTablePosition": [0,0,0],
+				"ImaCoilString": "NE",
+				"RFSWDDataType": "predicted",
+				"GSWDDataType": "predicted",
+				"ImaPATModeText": "p2"
+			},
+			"CSASeriesHeaderType": "MR",
+			"CSASeriesHeaderVersion": "20161130",
+			"CSASeriesHeaderInfo": {
+				"UsedPatientWeight": 57,
+				"NumberOfPrescans": 0,
+				"TransmitterCalibration": 427.775167,
+				"PhaseGradientAmplitude": 0,
+				"ReadoutGradientAmplitude": 0,
+				"SelectionGradientAmplitude": 0,
+				"GradientDelayTime": [18,18,17],
+				"RfWatchdogMask": 0,
+				"Sed": [1000000,103.62134503,103.62134503],
+				"SequenceFileOwner": "SIEMENS",
+				"Stim_mon_mode": 2,
+				"Operation_mode_flag": 2,
+				"dBdt_max": 0,
+				"t_puls_max": 0,
+				"dBdt_thresh": 0,
+				"dBdt_limit": 0,
+				"SW_korr_faktor": 1,
+				"Stim_max_online": [29.68829346,10.34031296,0.76554346],
+				"Stim_max_ges_norm_online": 0.86480039,
+				"Stim_lim": [39.9958992,23.36529922,23.68700027],
+				"Stim_faktor": 1,
+				"CoilForGradient": "void",
+				"CoilForGradient2": "AS097",
+				"CoilId": [255,238,55,173,238,238,93,238,238,238,238],
+				"MiscSequenceParam": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,2869,0,0,0,0,0,0],
+				"MrProtocolVersion": 21710006,
+				"PositivePCSDirections": "+LPH",
+				"RelTablePosition": [0,0,0],
+				"ReadoutOS": 2,
+				"LongModelName": "NUMARIS\/4",
+				"SliceArrayConcatenations": 1,
+				"SliceResolution": 1,
+				"AbsTablePosition": -1108,
+				"CoilString": "D:NE1,2",
+				"PATModeText": "p2",
+				"PatReinPattern": "1;HFS;57.00;31.58;1;0;2;1658508518",
+				"ProtocolChangeHistory": 0,
+				"Isocentered": 0,
+				"MrPhoenixProtocol": {
+					"ulVersion": 21710006,
+					"tSequenceFileName": "%SiemensSeq%\\medic",
+					"tProtocolName": "medic+AF8-sat",
+					"tReferenceImage0": "1.3.12.2.1107.5.2.36.40635.2016113009210257010602496",
+					"tReferenceImage1": "1.3.12.2.1107.5.2.36.40635.2016113009210545032202500",
+					"tReferenceImage2": "1.3.12.2.1107.5.2.36.40635.2016113009210833066502504",
+					"ucScanRegionPosValid": 1,
+					"ucTablePositioningMode": 1,
+					"sProtConsistencyInfo": {
+						"tBaselineString": "N4_VB17A_LATEST_20090307",
+						"tSystemType": "097",
+						"flNominalB0": 2.89362,
+						"flGMax": 20,
+						"flRiseTime": 5.55,
+						"lMaximumNofRxReceiverChannels": 32
+					},
+					"sGRADSPEC": {
+						"sEddyCompensationX": {
+							"aflAmplitude": [7.932039999999999e-05,0.00223504,0.0010246,0.000359622,0.00349697],
+							"aflTimeConstant": [1.8926,0.337745,0.0902549,0.00354951,0.000498268]
+						},
+						"sEddyCompensationY": {
+							"aflAmplitude": [0.000348006,0.00382503,0.000865895,0.000671383,0.00280186],
+							"aflTimeConstant": [0.97076,0.301578,0.0364287,0.0125441,0.000498626]
+						},
+						"sEddyCompensationZ": {
+							"aflAmplitude": [-0.0009890999999999999,0.00457574,0.00374372,0.00153059,-0.000625878],
+							"aflTimeConstant": [0.924688,0.367394,0.110312,0.00394677,0.002]
+						},
+						"bEddyCompensationValid": 1,
+						"sB0CompensationX": {
+							"aflAmplitude": [-0.0956082,-0.0500168,-0.020793],
+							"aflTimeConstant": [0.23495,0.010194,0.002]
+						},
+						"sB0CompensationY": {
+							"aflAmplitude": [0.0062647,0.0404018,-0.0332381],
+							"aflTimeConstant": [0.7965410000000001,0.00528732,0.0009198500000000001]
+						},
+						"sB0CompensationZ": {
+							"aflAmplitude": [0.759404,0.119404,0.0218224],
+							"aflTimeConstant": [0.222314,0.007995830000000001,0.00199957]
+						},
+						"bB0CompensationValid": 1,
+						"sCrossTermCompensationXY": {
+							"aflAmplitude": -0.00183809,
+							"aflTimeConstant": 0.185827
+						},
+						"sCrossTermCompensationXZ": {
+							"aflAmplitude": 0.000297471,
+							"aflTimeConstant": 0.205452
+						},
+						"sCrossTermCompensationYX": {
+							"aflAmplitude": -0.000727921,
+							"aflTimeConstant": 0.164311
+						},
+						"sCrossTermCompensationYZ": {
+							"aflAmplitude": -0.00107603,
+							"aflTimeConstant": 0.283538
+						},
+						"sCrossTermCompensationZX": {
+							"aflAmplitude": 0.000185635,
+							"aflTimeConstant": 0.187083
+						},
+						"sCrossTermCompensationZY": {
+							"aflAmplitude": 0.000244616,
+							"aflTimeConstant": 0.275385
+						},
+						"bCrossTermCompensationValid": 1,
+						"lOffsetX": 1916,
+						"lOffsetY": -7761,
+						"lOffsetZ": -15457,
+						"bOffsetValid": 1,
+						"lDelayX": 18,
+						"lDelayY": 18,
+						"lDelayZ": 17,
+						"bDelayValid": 1,
+						"flSensitivityX": 9.4561e-05,
+						"flSensitivityY": 9.11141e-05,
+						"flSensitivityZ": 9.7419e-05,
+						"bSensitivityValid": 1,
+						"alShimCurrent": [274,617,-1075,-1157,-96],
+						"bShimCurrentValid": 1,
+						"ucMode": 1
+					},
+					"sTXSPEC": {
+						"asNucleusInfo": [
+							{
+								"tNucleus": "1H",
+								"lFrequency": 123212184,
+								"bFrequencyValid": 1,
+								"flReferenceAmplitude": 427.775,
+								"bReferenceAmplitudeValid": 1,
+								"flAmplitudeCorrection": 1,
+								"bAmplitudeCorrectionValid": 1,
+								"bRFPAIndexValid": 1,
+								"lRFPAIndex": []
+							},
+							{
+								"tNucleus": [],
+								"lFrequency": [],
+								"bFrequencyValid": 1,
+								"flReferenceAmplitude": [],
+								"bReferenceAmplitudeValid": 1,
+								"flAmplitudeCorrection": 1,
+								"bAmplitudeCorrectionValid": 1,
+								"bRFPAIndexValid": 1,
+								"lRFPAIndex": -1
+							}
+						],
+						"aRFPULSE": [
+							{
+								"tName": "SLoop1RSatSS",
+								"bAmplitudeValid": 1,
+								"flAmplitude": 466.337
+							},
+							{
+								"tName": "SRFExcit",
+								"bAmplitudeValid": 1,
+								"flAmplitude": 133.662
+							}
+						],
+						"lNoOfTraPulses": 2,
+						"lBCExcitationMode": 2,
+						"lBCSeqExcitationMode": 4,
+						"flKDynMagnitudeMin": 0.5,
+						"flKDynMagnitudeMax": 1.5,
+						"flKDynMagnitudeClipLow": 1,
+						"flKDynMagnitudeClipHigh": 1,
+						"flKDynPhaseMax": 0.698132,
+						"flKDynPhaseClip": 0.174533,
+						"bKDynValid": 1,
+						"ucRFPulseType": 2,
+						"ucExcitMode": 1,
+						"ucSimultaneousExcitation": 1,
+						"ucBCExcitationModeValid": 1
+					},
+					"sRXSPEC": {
+						"lGain": 1,
+						"bGainValid": 1,
+						"alDwellTime": 5000
+					},
+					"sAdjData": {
+						"uiAdjFreMode": 1,
+						"uiAdjShimMode": 2,
+						"uiAdjWatSupMode": 1,
+						"uiAdjRFMapMode": 1,
+						"uiAdjMDSMode": 1,
+						"uiAdjTableTolerance": 1,
+						"uiAdjProtID": 45,
+						"sAdjVolume": {
+							"sPosition": {
+								"dSag": 2.629686764,
+								"dCor": 19.92809505,
+								"dTra": -122.0544461
+							},
+							"sNormal": {
+								"dCor": -0.09931974976999999,
+								"dTra": 0.99505557
+							},
+							"dThickness": 50,
+							"dPhaseFOV": 162,
+							"dReadoutFOV": 192
+						}
+					},
+					"ucEnableNoiseAdjust": 1,
+					"alTR": 44000,
+					"lContrasts": 1,
+					"alTE": 19000,
+					"acFlowComp": 2,
+					"lCombinedEchoes": 6,
+					"sSliceArray": {
+						"asSlice": {
+							"sPosition": {
+								"dSag": 2.629686764,
+								"dCor": 19.92809505,
+								"dTra": -122.0544461
+							},
+							"sNormal": {
+								"dCor": -0.09931974976999999,
+								"dTra": 0.99505557
+							},
+							"dThickness": 50,
+							"dPhaseFOV": 162,
+							"dReadoutFOV": 192
+						},
+						"lSize": 1,
+						"lConc": 1,
+						"ucMode": 4,
+						"sTSat": {
+							"dThickness": 50
+						}
+					},
+					"sGroupArray": {
+						"asGroup": {
+							"nSize": 1,
+							"dDistFact": 0.5
+						},
+						"anMember": [0,-1],
+						"lSize": 1,
+						"sPSat": {
+							"dThickness": 50,
+							"dGap": 10
+						}
+					},
+					"sRSatArray": {
+						"asElm": {
+							"sPosition": {
+								"dCor": 16.51247301,
+								"dTra": -174.2514471
+							},
+							"sNormal": {
+								"dCor": -0.09433969552,
+								"dTra": 0.9955400654
+							},
+							"dThickness": 50
+						},
+						"lSize": 1
+					},
+					"sAutoAlign": {
+						"dAAMatrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+					},
+					"sNavigatorPara": {
+						"lBreathHoldMeas": 1,
+						"lRespComp": 4
+					},
+					"sBladePara": {
+						"dBladeCoverage": 100,
+						"ucMotionCorr": 2
+					},
+					"sPrepPulses": {
+						"ucFatSat": 4,
+						"ucWaterSat": 4,
+						"ucInversion": 4,
+						"ucSatRecovery": 1,
+						"ucT2Prep": 1,
+						"ucTIScout": 1,
+						"ucFatSatMode": 2,
+						"dDarkBloodThickness": 200,
+						"dDarkBloodFlipAngle": 200,
+						"dT2PrepDuration": 40,
+						"dIRPulseThicknessFactor": 0.77
+					},
+					"sKSpace": {
+						"dPhaseResolution": 1,
+						"dSliceResolution": 1,
+						"dAngioDynCentralRegionA": 20,
+						"dAngioDynSamplingDensityB": 25,
+						"lBaseResolution": 384,
+						"lPhaseEncodingLines": 324,
+						"lPartitions": 10,
+						"lImagesPerSlab": 10,
+						"lRadialViews": 64,
+						"lRadialInterleavesPerImage": 2,
+						"lLinesPerShot": 1,
+						"unReordering": 1,
+						"dSeqPhasePartialFourierForSNR": 1,
+						"ucPhasePartialFourier": 8,
+						"ucSlicePartialFourier": 8,
+						"ucEnableEllipticalScanning": 1,
+						"ucAveragingMode": 1,
+						"ucMultiSliceMode": 2,
+						"ucDimension": 4,
+						"ucTrajectory": 1,
+						"ucViewSharing": 1,
+						"ucAsymmetricEchoMode": 1,
+						"ucPOCS": 1
+					},
+					"sFastImaging": {
+						"lEPIFactor": 1,
+						"lTurboFactor": 1,
+						"lSliceTurboFactor": 1,
+						"lSegments": 1,
+						"ulEnableRFSpoiling": 1,
+						"ucSegmentationMode": 1,
+						"lShots": 1,
+						"lEchoTrainDuration": 700
+					},
+					"sPhysioImaging": {
+						"lSignal1": 1,
+						"lMethod1": 1,
+						"lSignal2": 1,
+						"lMethod2": 1,
+						"lPhases": 1,
+						"lRetroGatedImages": 16,
+						"sPhysioECG": {
+							"lTriggerPulses": 1,
+							"lTriggerWindow": 5,
+							"lArrhythmiaDetection": 1,
+							"lCardiacGateOnThreshold": 100000,
+							"lCardiacGateOffThreshold": 700000,
+							"lTriggerIntervals": 1
+						},
+						"sPhysioPulse": {
+							"lTriggerPulses": 1,
+							"lTriggerWindow": 5,
+							"lArrhythmiaDetection": 1,
+							"lCardiacGateOnThreshold": 100000,
+							"lCardiacGateOffThreshold": 700000,
+							"lTriggerIntervals": 1
+						},
+						"sPhysioExt": {
+							"lTriggerPulses": 1,
+							"lTriggerWindow": 5,
+							"lArrhythmiaDetection": 1,
+							"lCardiacGateOnThreshold": 100000,
+							"lCardiacGateOffThreshold": 700000,
+							"lTriggerIntervals": 1
+						},
+						"sPhysioResp": {
+							"lRespGateThreshold": 20,
+							"lRespGatePhase": 2,
+							"dGatingRatio": 0.3
+						},
+						"sPhysioNative": {
+							"ucMode": 1,
+							"ucFlowSenMode": 1
+						}
+					},
+					"sSpecPara": {
+						"lPhaseCyclingType": 1,
+						"lPhaseEncodingType": 1,
+						"lRFExcitationBandwidth": 1,
+						"ucRemoveOversampling": 1,
+						"lAutoRefScanNo": 1,
+						"lDecouplingType": 1,
+						"lNOEType": 1,
+						"lExcitationType": 1,
+						"lSpecAppl": 1,
+						"lSpectralSuppression": 1
+					},
+					"sDiffusion": {
+						"ulMode": 1
+					},
+					"sAngio": {
+						"ucPCFlowMode": 2,
+						"ucTOFInflow": 4,
+						"lDynamicReconMode": 1,
+						"lTemporalInterpolation": 1
+					},
+					"sPreScanNormalizeFilter": {
+						"ucOn": 1,
+						"ucSaveUnfiltered": 1
+					},
+					"sDistortionCorrFilter": {
+						"ucMode": 1
+					},
+					"sPat": {
+						"lAccelFactPE": 2,
+						"lAccelFact3D": 1,
+						"lRefLinesPE": 36,
+						"ucPATMode": 2,
+						"ucRefScanMode": 2,
+						"ucTPatAverageAllFrames": 1
+					},
+					"sMDS": {
+						"ulMdsModeMask": 1,
+						"ulMdsVariableResolution": 1,
+						"lTableSpeedNumerator": 1,
+						"lmdsLinesPerSegment": 15,
+						"sMdsEndPosSBCS_mm": {
+							"dTra": 600
+						},
+						"ulMdsReconMode": 1,
+						"dMdsRangeExtension": 600
+					},
+					"ucEnableIntro": 1,
+					"ucDisableChangeStoreImages": 1,
+					"ucAAMode": 1,
+					"ucAARegionMode": 1,
+					"ucAARefMode": 1,
+					"ucReconstructionMode": 1,
+					"ucOneSeriesForAllMeas": 4,
+					"ucPHAPSMode": 1,
+					"ucDixon": 1,
+					"ucDixonSaveOriginal": 1,
+					"lAverages": 1,
+					"dAveragesDouble": 1,
+					"lRepetitions": 3,
+					"adFlipAngleDegree": 11,
+					"lScanTimeSec": 58,
+					"lTotalScanTimeSec": 234,
+					"dRefSNR": 61919.30232,
+					"dRefSNR_VOI": 61919.30232,
+					"tdefaultEVAProt": "%SiemensEvaDefProt%\\Inline\\Inline.evp",
+					"asCoilSelectMeas": {
+						"tNucleus": "1H",
+						"iUsedRFactor": 3,
+						"asList": [
+							{
+								"sCoilElementID": {
+									"tCoilID": "NeckMatrix",
+									"lCoilCopy": 1,
+									"tElement": "NE2"
+								},
+								"lElementSelected": 1,
+								"lRxChannelConnected": 1
+							},
+							{
+								"sCoilElementID": {
+									"tCoilID": "NeckMatrix",
+									"lCoilCopy": 1,
+									"tElement": "N2S"
+								},
+								"lElementSelected": 1,
+								"lRxChannelConnected": 2
+							},
+							{
+								"sCoilElementID": {
+									"tCoilID": "NeckMatrix",
+									"lCoilCopy": 1,
+									"tElement": "NE1"
+								},
+								"lElementSelected": 1,
+								"lRxChannelConnected": 3
+							},
+							{
+								"sCoilElementID": {
+									"tCoilID": "NeckMatrix",
+									"lCoilCopy": 1,
+									"tElement": "N1S"
+								},
+								"lElementSelected": 1,
+								"lRxChannelConnected": 4
+							}
+						],
+						"sCOILPLUGS": {
+							"aulPlugId": [255,238,55,173,238,238,93,238,238,238,238],
+							"auiNmbrOfNibbles": [2,2,2,2,2,2,2,2,2,2,2]
+						},
+						"aFFT_SCALE": [
+							{
+								"flFactor": 0.249456,
+								"bValid": 1,
+								"lRxChannel": 1
+							},
+							{
+								"flFactor": 0.240296,
+								"bValid": 1,
+								"lRxChannel": 2
+							},
+							{
+								"flFactor": 0.249178,
+								"bValid": 1,
+								"lRxChannel": 3
+							},
+							{
+								"flFactor": 0.242245,
+								"bValid": 1,
+								"lRxChannel": 4
+							}
+						]
+					},
+					"sEFISPEC": {
+						"bEFIDataValid": 1
+					},
+					"ucCineMode": 1,
+					"ucSequenceType": 1,
+					"ucCoilCombineMode": 2,
+					"ucFlipAngleMode": 1,
+					"lTOM": 1,
+					"lProtID": -198,
+					"ucReadOutMode": 1,
+					"ucBold3dPace": 1,
+					"ucForcePositioningOnNDIS": 1,
+					"ucInternalTablePosValid": 1,
+					"sParametricMapping": {
+						"ucParametricMap": 1
+					},
+					"sIR": {
+						"lScanNumber": 1
+					},
+					"sAsl": {
+						"ulMode": 1
+					}
+				},
+				"GradientMode": "Fast",
+				"FlowCompensation": "Yes",
+				"RFSWDOperationMode": 0,
+				"RFSWDMostCriticalAspect": "Torso Local",
+				"SARMostCriticalAspect": [10,1.73739125,0],
+				"TablePositionOrigin": [0,0,-1108],
+				"B1rms": [7.07106781,1.21774598],
+				"B1rmsSupervision": "NO",
+				"TalesReferencePower": 2695.65894919
+			},
+			"Private_0029_1160": "com ",
+			"RequestedProcedureDescription": "TL NISCI",
+			"PerformedProcedureStepStartDate": 736664,
+			"PerformedProcedureStepStartTime": 33618.94,
+			"PerformedProcedureStepID": "MR20161130092018",
+			"PerformedProcedureStepDescription": "TL^NISCI",
+			"Private_0051_0010": "SIEMENS MR HEADER ",
+			"Private_0051_1008": "IMAGE NUM 4 ",
+			"Private_0051_1009": "1.0 ",
+			"Private_0051_100a": "TA 58.20",
+			"Private_0051_100b": "324p*384",
+			"Private_0051_100c": "FoV 162*192 ",
+			"Private_0051_100d": "SP F145.9 ",
+			"Private_0051_100e": "Tra>Cor(5.7)",
+			"Private_0051_100f": "D:NE1,2 ",
+			"Private_0051_1011": "p2",
+			"Private_0051_1012": "TP 0",
+			"Private_0051_1013": "+LPH",
+			"Private_0051_1016": "p2 M\/ND ",
+			"Private_0051_1017": "SL 5.0",
+			"Private_0051_1019": "A1\/PFP\/SAT1 ",
+			"StartOfPixelData": 64804,
+			"SizeOfPixelData": 248832,
+			"VROfPixelData": "OW"
+		}
+	]
+}
