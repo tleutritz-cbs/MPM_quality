@@ -15,10 +15,10 @@
 % 2018-04-10: made compatible with Philips data
 % 2019-02-19: extend output to input structure for further processing
 % to do: express tolerance at least partially in percentage?
+% 2019-08-06: rework protocol to HTML output
 function [inputs,vcd] = check_protocol_and_create_inputs(PathName)
 
 %% make several variables globally available
-global curr_seq_name
 global protocol_settings
 global protocol_standard
 
@@ -54,9 +54,9 @@ if ~exist(protocol_standard_file,'file')
                             protocol_standard.(cell2mat(vk)).(seq_name) = ...
                                 get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,'.json'));
                         case {4 5 6}
-                            for echo_num = 1:6
-                                protocol_standard.(cell2mat(vk)).(strcat(seq_name,num2str(echo_num))) = ...
-                                    get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,int2str(echo_num),'.json'));
+                            for echo = 1:6
+                                protocol_standard.(cell2mat(vk)).(strcat(seq_name,num2str(echo))) = ...
+                                    get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,int2str(echo),'.json'));
                             end
                     end
                 end
@@ -74,7 +74,23 @@ inputs = cell(8,npth);
 %% loop over given folders
 for pn = 1:npth
     cpn = char(PathName(pn,:));
-    diary(fullfile(cpn,'protocol_check.txt'));
+    
+    % prepare report file
+    fid = fopen(fullfile(cpn,'protocol_check.htm'),'w');
+    str = ['<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"' ...
+                '"http://www.w3.org/TR/html4/strict.dtd">\n' ...
+           '<html>\n' ...
+           '<head>\n' ...
+           ' <title>NISCI Protocol check results for folder %s</title>\n' ...
+           '</head>\n' ...
+           '<h1>Protocol check results for folder %s</h1>\n'
+          ];
+    fprintf(fid,str,cpn,cpn); % cpn should be replaced with unified patient ID!
+    fprintf(fid,['<h2>Table of contents</h2>\n' ...
+        '<a href="#protcheck">1. Checks per sequence and parameter</a><br>\n' ...
+        '<a href="#summary">2. Summary of protocol check and output</a>\n' ...
+        '<h2><a id="protcheck">1. Checks per sequence and parameter</a></h2>\n']);
+    
     ADir = dir(cpn); % get folder directories
     ADir = ADir([ADir.isdir]); % make sure to only have folders in the list
     AName = {ADir.name}; % convert to string array
@@ -92,7 +108,8 @@ for pn = 1:npth
     %% check which protocol is present
     PName = string(AName); % convert to string array
     nos = numel(AName); % number of apparent sequence folders
-    nms = 0; % counter for missing sequeneces
+    nms = 0; % counter for missing sequences
+    all_ok = true; % initialize overall check variable
     slc = 1:6; % counter for input creation
     % find locations of the protocol names
     for prn = 1:nop
@@ -214,8 +231,8 @@ for pn = 1:npth
                 cd(strcat(cpn,filesep,PName{PPos.(curr_seq_name){cc}}));
                 % check if folder is empty
                 if isempty(ls)
-                    fprintf(1,'Folder %s of protocol %s is empty.\n', ...
-                        strrep(cd,[cpn filesep],''),curr_seq_name);
+                    fprintf(fid,'Folder <a href="%s">%s</a> of protocol %s is empty.<br>\n', ...
+                        cd,strrep(cd,[cpn filesep],''),curr_seq_name);
                     continue
                 else
                     % read in NIFTI files
@@ -223,38 +240,49 @@ for pn = 1:npth
                 end
                 files = fullfile({mf.folder},{mf.name});
                 
-                fprintf(1,'Checking sequence "%s" in folder "%s"\n',...
-                    curr_seq_name,PName{PPos.(curr_seq_name){cc}});
+                fprintf(fid,'Checking sequence "%s" in folder <a href="%s">%s</a><br>\n',...
+                    curr_seq_name,cd,PName{PPos.(curr_seq_name){cc}});
                 for f_ind = 1:numel(files)
                     if ((prn == 1) || (prn > 6)) && (f_ind > 1) % skip multiple clinical & B1map files
                         break
                     end
                     cur_file = files{f_ind};
-                    [mtch,mismtch] = pcheck(vcd,curr_seq_name,cur_file,f_ind,tolerance);
-                    if ~mismtch
-                        fprintf(1,'Checked %i parameters in total. All matched.\n', mtch+mismtch);
+                    if (prn > 3) && (prn < 7) % for multi-echo data:
+                        [mtch,mismtch] = pcheck(vcd,curr_seq_name,cur_file,f_ind,tolerance,fid);
                     else
-                        fprintf(1,'Checked %i parameters in total. Mismatch in %i case(s).\n', mtch+mismtch,mismtch);
+                        [mtch,mismtch] = pcheck(vcd,curr_seq_name,cur_file,0,tolerance,fid);
+                    end
+                    if ~mismtch
+                        fprintf(fid,'Checked %i parameters in total. All matched.<br><br>\n', mtch+mismtch);
+                    else
+                        fprintf(fid,'Checked %i parameters in total. Mismatch in %i case(s).<br><br>\n', mtch+mismtch,mismtch);
+                        all_ok = false;
                     end
                 end
             end
         end
     end
     %% give feedback about the presence of the protocols
+    fprintf(fid,'<h2><a id="summary">2. Summary of protocol check and output</a></h2>\n');
     if PNum.(cvl{1}) && (PNum.(cvl{2}) >= 3) && (PNum.(cvl{3}) >= 3) && ...
             PNum.(cvl{4}) && PNum.(cvl{5}) && PNum.(cvl{6}) && ...
             PNum.(cvl{7}) && PNum.(cvl{8}) && PNum.(cvl{9}) && PNum.(cvl{10})
-        fprintf(1,'\n Data from all sequences present. \n');
+        fprintf(fid,'<font color="green">Data from all sequences present.</font><br>\n');
     elseif (PNum.(cvl{2}) < 3) && (PNum.(cvl{3}) < 3)
-        fprintf(1,'\n RF sensitivity maps not acquired for all 3 MPMs. \n');
-        fprintf(1,'\n Switch to RF sensitivity correction with single measurement. \n');
-        sensitivity = 'RF_once'; % for job file
+        fprintf(fid,'<font color="red">RF sensitivity maps not acquired for all 3 MPMs.<br>\n');
+        fprintf(fid,'Switch to RF sensitivity correction with single measurement.</font><br>\n');
     end
     if nms
         for cix = 1:nms
-            fprintf(1,'\n The sequence "%s" is missing. \n',missing{cix});
+            fprintf(fid,'<font color="red">The sequence "%s" is missing.</font><br>\n',missing{cix});
         end
     end
+    if ~all_ok
+        fprintf(fid,['<font color="red">There were protocol deviations, '...
+            'which have to be checked - see red lines in section ' ...
+            '<a href="#protcheck">Checks per sequence and parameter</a>.</font><br>\n']);
+    end
+    
     %% prepare inputs file
     inputs{1,pn} = {fullfile(fileparts(cpn),map_folder)};
     for prn = slc % loop over brain protocols to create input for map creation
@@ -338,9 +366,14 @@ for pn = 1:npth
     end
     
     %% write data to files
-    diary('off'); % write the output to the specified protocol file
-    save(fullfile(cpn,'all_protocol_settings.mat'),'protocol_settings','-v7.3');
-    save(fullfile(cpn,'inputs.mat'),'inputs','-v7.3');
+    prot_file_name = fullfile(cpn,'all_protocol_settings.mat');
+    save(prot_file_name,'protocol_settings','-v7.3');
+    inputs_file_name = fullfile(cpn,'inputs.mat');
+    save(inputs_file_name,'inputs','-v7.3');
+    fprintf(fid,['<p>Protocol settings and inputs for processing saved as HDF5 compatible Matlab files:<br>\n'...
+        '<a href="%s">all_protocol_settings.mat</a><br>\n'...
+        '<a href="%s">inputs.mat</a><br></p>\n'],prot_file_name,inputs_file_name);
+    fclose(fid); 
 end
 
 function tol = tolchk(actual,target,tolerance)
@@ -355,7 +388,7 @@ end
 %% function for retrieving and checking the parameters for a distinct
 % secquence, distinguishing the parameters to check and give feedback
 % about mismatch of parameters; outputting the number of match/mismatch
-function [check_okay,check_not_okay] = pcheck(vendor,sequence,mf,ind,tolerance)
+function [check_okay,check_not_okay] = pcheck(vendor,sequence,mf,ind,tolerance,fid)
 % initializing counters for match/mismatch
 check_okay = 0;
 check_not_okay = 0;
@@ -376,12 +409,15 @@ if contains(upper(sequence),'MT') || contains(upper(sequence),'PD') || ...
         cprn = sprintf('%s_%i',sequence,ind);
     end
 else
-    cprn = sprintf('%s_%i',sequence,ind);
+    cprn = sequence;
     prot = protocol_standard.(vendor).(sequence);
 end
+
 prot = prot{1,1};
 
-fprintf('echo: %i, sequence: %s, cprn: %s\n',echo_num,sequence,cprn);
+if ind % echo_num ~= 0, i.e. for multi-echo data
+    fprintf(fid,'echo: %i, sequence: %s<br>\n',echo_num,sequence);
+end
 
 %% setting the search strings for get_metadata_val
 % distinguish between numerical (num_val) and string values (str_val);
@@ -493,21 +529,21 @@ for nvc = 1:numel(num_val)
         tv = get_metadata_val(prot,cval);
         av = get_metadata_val(json,cval);
     end
-    if contains(vendor,'s') && contains(cval,'EchoTime')
+    if contains(vendor,'s') && contains(cval,'EchoTime') && echo_num
         tv = get_metadata_val(prot,'EchoTimes');
         tv = tv(echo_num);
     end
     protocol_settings.(cprn).num.(cval).actual = av;
     protocol_settings.(cprn).num.(cval).reference = tv;
     if ~tolchk(av,tv,tolerance)
-        fprintf(1,['Mismatch of %s in sequence "%s":',...
-            ' actual value is %5.2f instead of %5.2f (deviation of %3.2f%%).\n'],...
-            cval, cprn, av, tv,100*(av-tv)/tv);
+        fprintf(fid,['<font color="red">Mismatch of %s:',...
+            ' actual value is %5.2f instead of %5.2f (deviation of %3.2f%%).</font><br>\n'],...
+            cval, av, tv,100*(av-tv)/tv);
         check_not_okay = check_not_okay + 1;
         protocol_settings.(cprn).num.(cval).match = false;
     else
         check_okay = check_okay + 1;
-        fprintf(1,'Check of sequence "%s", actual value of "%s" (%5.2f): okay.\n',cprn,cval,av);
+        fprintf(fid,'Actual value of "%s" (%5.2f): okay.<br>\n',cval,av);
         protocol_settings.(cprn).num.(cval).match = true;
     end
 end
@@ -520,13 +556,13 @@ for svc = 1:numel(str_val)
     tv = get_metadata_val(prot,cval);
     protocol_settings.(cprn).str.(cval).reference = tv;
     if ~contains(lower(av),lower(tv)) || (contains(cval,'Coil') && (~contains(lower(tv),'b') && contains(lower(av),'b')))
-        fprintf(1,'Mismatch of %s in sequence "%s": actual value is "%s" instead of "%s".\n',...
-            cval, cprn, av, tv);
+        fprintf(fid,'<font color="red">Mismatch of %s: actual value is "%s" instead of "%s".</font><br>\n',...
+            cval, av, tv);
         check_not_okay = check_not_okay + 1;
         protocol_settings.(cprn).str.(cval).match = false;
     else
         check_okay = check_okay + 1;
-        fprintf(1,'Check of sequence "%s", actual value of "%s" ("%s"): okay.\n',cprn,cval,av);
+        fprintf(fid,'Actual value of "%s" ("%s"): okay.<br>\n',cval,av);
         protocol_settings.(cprn).str.(cval).match = true;
     end
 end
