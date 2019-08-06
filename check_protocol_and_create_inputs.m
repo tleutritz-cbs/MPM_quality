@@ -24,7 +24,7 @@ global protocol_standard
 
 %% spm dialog to gather the folder(s) including subfolders with converted NIFTI files
 if nargin == 0
-    PathName = cfg_getfile(Inf,'dir','Select folders containing the data to checked');
+    PathName = cfg_getfile(Inf,'dir','Select folders containing NiFTI data to be checked');
 end
 
 %% protocol and other presets
@@ -35,35 +35,37 @@ protocol_list.p = {'B1Map' 'head' 'body' 'MTw' 'PDw' 'T1w' ...
 tolerance = 0.0001; % tolerance for checking numbers
 map_folder = 'maps'; % folder for map creation output
 [cp,~,~] = fileparts(mfilename('fullpath'));
-fullfile(cp,'protocol_standard.mat');
+protocol_standard_file = fullfile(cp,'protocol_standard.mat');
 
 if ~exist(protocol_standard_file,'file')
-% read-in json files with standard protocol settings:
-protpath = fullfile(cp,'protocol');
-for vk = {'s' 'p'}
-    switch cell2mat(vk)
-        case 's'
-            for seq_name = protocol_list.s
-                protocol_standard.(cell2mat(vk)).(cell2mat(seq_name)) = get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',cell2mat(seq_name),'.json'));
-            end
-        case 'p'
-            for curr_seq = 1:numel(protocol_list.p)
-                seq_name = protocol_list.p{curr_seq};
-                switch curr_seq
-                    case {1 2 3 7 8 9 10}
-                        protocol_standard.(cell2mat(vk)).(seq_name) = get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,'.json'));
-                    case {4 5 6}
-                        for echo_num = 1:6
-                            protocol_standard.(cell2mat(vk)).(strcat(seq_name,num2str(echo_num))) = get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,int2str(echo_num),'.json'));
-                        end
+    % read-in json files with standard protocol settings:
+    protpath = fullfile(cp,'protocol');
+    for vk = {'s' 'p'}
+        switch cell2mat(vk)
+            case 's'
+                for seq_name = protocol_list.s
+                    protocol_standard.(cell2mat(vk)).(cell2mat(seq_name)) = get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',cell2mat(seq_name),'.json'));
                 end
-            end
+            case 'p'
+                for curr_seq = 1:numel(protocol_list.p)
+                    seq_name = protocol_list.p{curr_seq};
+                    switch curr_seq
+                        case {1 2 3 7 8 9 10}
+                            protocol_standard.(cell2mat(vk)).(seq_name) = ...
+                                get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,'.json'));
+                        case {4 5 6}
+                            for echo_num = 1:6
+                                protocol_standard.(cell2mat(vk)).(strcat(seq_name,num2str(echo_num))) = ...
+                                    get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,int2str(echo_num),'.json'));
+                            end
+                    end
+                end
+        end
     end
-end
-save(protocol_standard_file,'protocol_standard');
+    save(protocol_standard_file,'protocol_standard');
 else
-% read-in json files with standard protocol settings:
-load(protocol_standard_file,'protocol_standard');
+    % read-in condensed json file with standard protocol settings:
+    load(protocol_standard_file,'protocol_standard');
 end
 
 npth = size(PathName,1);
