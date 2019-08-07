@@ -37,4 +37,5 @@ else
 end
 % run multi-echo quality script
 mpm_quality_multiecho_data_atlas_ROI_v4(fullfile(fileparts(NIFTI_path),'maps','Results'))
+report_mpm_qlt(fullfile(fileparts(NIFTI_path),'maps','Results'))
 end
