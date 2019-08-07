@@ -373,6 +373,7 @@ for pn = 1:npth
     fprintf(fid,['<p>Protocol settings and inputs for processing saved as HDF5 compatible Matlab files:<br>\n'...
         '<a href="%s">all_protocol_settings.mat</a><br>\n'...
         '<a href="%s">inputs.mat</a><br></p>\n'],prot_file_name,inputs_file_name);
+    fprintf(fid,'</body></html>');
     fclose(fid); 
 end
 
