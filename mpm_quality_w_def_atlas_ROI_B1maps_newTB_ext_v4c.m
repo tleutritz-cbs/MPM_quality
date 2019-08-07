@@ -1,9 +1,8 @@
 function mpm_quality_w_def_atlas_ROI_B1maps_newTB_ext_v4c(pnames)
 
 % This function calculates some important measures and compares them to 
-% values from the publication "Quantitative multi-parameter mapping of R1, 
-% PD*, MT, and R2* at 3T: a multi-center validation" by N. Weiskopf et
-% al. (Front. Neurosci., 10 June 2013, doi: 10.3389/fnins.2013.00095).
+% values from the NISCI THS study with the same protocol at 3 clinical sites,
+% measured at 5 healthy subjects including test and retest measurements.
 % Tobias Leutritz, 12.01.2018
 % 2018-08-23: use of segmentations from MPMCalc, flexibilize vox. size
 % 2018-08-24: fix labelling warning (Ignoring extra legend entries.)
@@ -13,6 +12,7 @@ function mpm_quality_w_def_atlas_ROI_B1maps_newTB_ext_v4c(pnames)
 % 2018-11-15: simplify segmentation input
 % 2018-12-21: MT -> MTsat due to NI paper revision
 % 2019-05-20: add MTsat segmentation
+% 2019-08-07: change ref. values to THS results
 
 % get files to be analyzed (segmented data from subjects, each in a folder)
 if nargin < 1
@@ -27,12 +27,12 @@ end
 % ROI masks from normalised space back to the maps space in order to avoid 
 % manual ROI definition for each subject.
 % *seg8.mat file can be sufficient to reproduce missing files.
-map.name_suffix = {'R1' 'PD' 'R2s' 'R2s_OLS' 'MTsat' 'MTsat' 'MTsat' 'MTsat' 'MTsat' 'T1w_OLSfit_TEzero'};
+map.name_suffix = {'R1' 'PD' 'R2s_OLS' 'MTsat' 'MTsat' 'MTsat' 'MTsat' 'MTsat' 'T1w_OLSfit_TEzero'};
 % #                  1    2    3      4       5    6    7    8    9    10 
-map.name_prefix = {'' '' '' '' '' 'c1' 'c2' 'iy_' 'c3' ''};
+map.name_prefix = {'' '' '' '' 'c1' 'c2' 'iy_' 'c3' ''};
 % #                 1  2  3  4  5  6    7    8     9   10
-MPM.name = {'R1' 'PD' 'R2s' 'R2s_OLS' 'MT' 'T1w'};
-% #           1   2    3      4        5    6
+MPM.name = {'R1' 'PD' 'R2s_OLS' 'MT' 'T1w'};
+% #           1   2     4        5    6
 % numbering of MPMs according to map.name_suffix
 for nm = 1:numel(MPM.name)
     mpname = MPM.name{nm};
@@ -46,7 +46,7 @@ pos.c1 = find(contains(map.name_prefix,'c1'));
 pos.c2 = find(contains(map.name_prefix,'c2'));
 pos.c3 = find(contains(map.name_prefix,'c3'));
 pos.idef = find(contains(map.name_prefix,'iy_'));
-map.subfolder = {'' '' 'Supplementary' '' '' '' '' '' '' 'Supplementary'};
+map.subfolder = {'' '' '' '' '' '' '' '' 'Supplementary'};
 % #              1  2   3              4  5  6  7  8  9  10
 mc = numel(map.name_suffix);
 [cp,~,~] = fileparts(mfilename('fullpath'));
@@ -54,28 +54,22 @@ atlas_ROI_dir = fullfile(cp,'ROIs');
 
 % define ROIs and MPM names for evaluation
 ROI.name = {'GM' 'WM' 'GM_CN'  'WM_CC' ...
-            'WM_CST' 'GM_S1' 'GM_thalamus' 'WM_thalamus' 'GM_M1' ...
+            'WM_CST' 'GM_S1' 'GM_M1' ...
             'GM_cerebellum' 'WM_cerebellum' 'GM_M1S1' ...
-            'GM_Hippocampi' 'WM_Hippocampi' 'wholebrain'};
+            'GM_Hippocampi' 'wholebrain'};
 pos.wb = numel(ROI.name);
 
-% literature values (for reference see preamble)
-% order of values: GM, CN, WM, CC
-mean_lit.R1 = [609 683 1036 1158]./1000;
-mean_lit.R2 = [0.0152 0.0182 0.021 0.025].*1000;
-mean_lit.MT = [794 836 1764 1978]./1000;
-mean_lit.T1 = [319 321 398 414];
-mean_lit.PD = [84.44 82.67 68.35 64.65];
-cov_lit.R1 = [6.0 4.7 4.6 4.6]./100; % inter-site coefficient of variation!
-cov_lit.R2 = [20.3 12.0 11.4 12.1]./100;
-cov_lit.MT = [7.9 7.6 6.1 7.4]./100;
-cov_lit.T1 = [15.2 13.0 15.1 14.7]./100;
-cov_lit.PD = [3.6 2.7 2.7 2.7]./100;
-% sd_lit.R1 = [8 22 36 50]./1000;
-% sd_lit.R2 = [.4 1.2 .8 .5];
-% sd_lit.MT = [14 27 66 85]./1000;
-% sd_lit.T1 = [24 15 15 35];
-% sd_lit.PD = [1.87 1.64 0.06 0.86];
+% reference values ordered as GM, CN, WM, CC as in Weiskopf et al. 2013
+mean_lit.R1 = [0.62388, 0.64858, 0.98738, 1.09377];
+mean_lit.R2 = [16.10719, 19.19238, 22.13997, 25.4136];
+mean_lit.MT = [2.05309, 2.07694, 4.00709, 4.52533];
+mean_lit.T1 = [301.80378, 332.90888, 384.23419, 417.14780];
+mean_lit.PD = [80.46574, 88.21052, 68.76486, 68.79135];
+cov_lit.R1 = [0.13273, 0.06633, 0.10520, 0.05873];
+cov_lit.R2 = [0.38411, 0.17581, 0.18344, 0.17953];
+cov_lit.MT = [0.16252, 0.09130, 0.10888, 0.09366];
+cov_lit.T1 = [0.10100, 0.04789, 0.07117, 0.04159];
+cov_lit.PD = [0.13670, 0.03881, 0.12127, 0.04635];
 
 % initialise cell variables
 vol_info = cell(mc,1);
@@ -92,7 +86,7 @@ for pn = 1:npth
         continue
     end
     curdir = cd;
-    outdir = fullfile(curdir,'MPM_Quality3');
+    outdir = fullfile(curdir,'MPM_Quality4');
     if ~exist(outdir,'dir')
         mkdir(outdir);
     elseif exist(fullfile(outdir,'measures_ext_v4.mat'),'file') == 2
@@ -323,7 +317,7 @@ for pn = 1:npth
                 if cn < 5
                 l2 = line([mean_lit.(mpname(1:2))(cp) mean_lit.(mpname(1:2))(cp)],ax1.YAxis.Limits,'Color','k');
                 legend(ax1,[l1,l2],{char(strcat(rname,' mean')),...
-                'literature'},'Location','southoutside',...
+                'THS'},'Location','southoutside',...
                 'Orientation','horizontal','Interpreter','none');
                 end
                 saveas(h,char(strcat(rname,'_',strcat(MPM.name{cm}),'_histfit.png')));
@@ -349,7 +343,7 @@ for pn = 1:npth
                 if cn < 5
                 l2 = line([mean_lit.(mpname(1:2))(cp) mean_lit.(mpname(1:2))(cp)],ax1.YAxis.Limits,'Color','k');
                 legend(ax1,[l1,l2],{char(strcat(rname,' mean')),...
-                    'literature'},'Location','southoutside',...
+                    'THS'},'Location','southoutside',...
                     'Orientation','horizontal','Interpreter','none');
                 end
                 saveas(h,char(strcat(rname,'_',strcat(MPM.name{cm}),'_hist.png')));
@@ -383,16 +377,6 @@ for pn = 1:npth
         cnr_value.(mpname).GMWM = abs(mean_value.(mpname).GM - ...
             mean_value.(mpname).WM)/sqrt(std_value.(mpname).GM^2 + ...
             std_value.(mpname).WM^2);
-        
-        % interior WM/GM CNR in Thalamus
-        cnr_value.(mpname).ThGMWM = abs(mean_value.(mpname).GM_thalamus - ...
-            mean_value.(mpname).WM_thalamus)/sqrt(std_value.(mpname).GM_thalamus^2 + ...
-            std_value.(mpname).WM_thalamus^2);
-        
-        % exterior GM/WM CNR from Hippocampus
-        cnr_value.(mpname).HippoGMWM = abs(mean_value.(mpname).GM_Hippocampi - ...
-            mean_value.(mpname).WM_Hippocampi)/sqrt(std_value.(mpname).GM_Hippocampi^2 + ...
-            std_value.(mpname).WM_Hippocampi^2);
     end    
     
     %% create figure of first ROI values
@@ -400,131 +384,127 @@ for pn = 1:npth
     set(gcf,'Visible', 'off');
     hold on;
  
-    ax1 = subplot(2,4,1);
-    ax2 = subplot(2,4,2);
-    ax3 = subplot(2,4,3);
-    ax4 = subplot(2,4,4);
-    ax5 = subplot(2,4,5);
-    ax6 = subplot(2,4,6);
-    ax7 = subplot(2,4,7);
-    ax8 = subplot(2,4,8);
+    ax1 = subplot(2,5,1);
+    ax2 = subplot(2,5,2);
+    ax3 = subplot(2,5,3);
+    ax4 = subplot(2,5,4);
+    ax5 = subplot(2,5,5);
+    ax6 = subplot(2,5,6);
+    ax7 = subplot(2,5,7);
+    ax8 = subplot(2,5,8);
+    ax9 = subplot(2,5,9);
+    ax10 = subplot(2,5,10);
         
     mv1 = mean_values('R1');
-    %mv2 = mean_values('PD');
     bar(ax1,[mv1,mean_lit.R1']);
     ax1.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
-    legend(ax1,{'R1', 'literature'},'Location','southoutside','Orientation','horizontal');
+    legend(ax1,{'R1', 'THS'},'Location','southoutside','Orientation','horizontal');
     dm1 = diff_means('R1'); 
-    %dm2 = diff_means('PD'); 
     for i=1:4
         if abs(dm1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax1,i-.3,mv1(i)*1.02,num2str(dm1(i)*100,ft),'rotation', 90);
-     %   if abs(dm2(i))*100>=100 ft = '%+.0f%%'; else ft = '%+.2g%%'; end
-      %  text(ax1,i,mv2(i)*1.02,num2str(dm2(i)*100,ft),'rotation', 90);
+        text(ax1,i-.2,mv1(i)*1.02,num2str(dm1(i)*100,ft),'rotation', 90);
     end
          
-    mv1 = mean_values('R2s');
-    mv2 = mean_values('R2s_OLS');
-    bar(ax2,[mv1,mv2,mean_lit.R2']);
+    mv1 = mean_values('R2s_OLS');
+    bar(ax2,[mv1,mean_lit.R2']);
     ax2.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
-    legend(ax2,{'R2*','R2* OLS', 'literature'},'Location','southoutside','Orientation','horizontal');
-	dm1 = diff_means('R2s'); 
-    dm2 = diff_means('R2s_OLS'); 
+    legend(ax2,{'R2*', 'THS'},'Location','southoutside','Orientation','horizontal');
+	dm1 = diff_means('R2s_OLS'); 
     for i=1:4
         if abs(dm1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax2,i-.3,mv1(i)*1.02,num2str(dm1(i)*100,ft),'rotation', 90);
-        if abs(dm2(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax2,i,mv2(i)*1.02,num2str(dm2(i)*100,ft),'rotation', 90);
+        text(ax2,i-.2,mv1(i)*1.02,num2str(dm1(i)*100,ft),'rotation', 90);
     end
     
     mv = mean_values('MT');
-    scale = floor(max(mean_lit.MT) / max(mv));
-    if scale == 0, scale = 1; end
-    label = strcat('MT (x',int2str(scale),')');
-    bar(ax3,[mv.*scale,mean_lit.MT']);
+    label = 'MTsat';
+    bar(ax3,[mv,mean_lit.MT']);
     ax3.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
     dm = diff_means('MT');
     for i=1:4
         if abs(dm(i)*100)>=99, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax3,i-.2,mv(i)*scale*1.02,num2str(dm(i)*100,ft),'rotation', 90);
+        text(ax3,i-.2,mv(i)*1.02,num2str(dm(i)*100,ft),'rotation', 90);
     end
-    legend(ax3,{label,'literature'},'Location','southoutside','Orientation','horizontal');
+    legend(ax3,{label,'THS'},'Location','southoutside','Orientation','horizontal');
 
      mv = mean_values('PD');
      bar(ax4,[mv,mean_lit.PD']);
      ax4.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
-     legend(ax4,{'PD','literature'},'Location','southoutside','Orientation','horizontal');
+     legend(ax4,{'PD','THS'},'Location','southoutside','Orientation','horizontal');
      dm = diff_means('PD');
      for i=1:4
          if abs(dm(i)*100)>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
          text(ax4,i-.2,mv(i)*1.02,num2str(dm(i)*100,ft),'rotation', 90);
      end
      
+     mv = mean_values('T1w');
+     bar(ax5,[mv,mean_lit.T1']);
+     ax5.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
+     legend(ax5,{'T1','THS'},'Location','southoutside','Orientation','horizontal');
+     dm = diff_means('T1w');
+     for i=1:4
+         if abs(dm(i)*100)>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
+         text(ax5,i-.2,mv(i)*1.02,num2str(dm(i)*100,ft),'rotation', 90);
+     end
+     
     cv1 = cov_values('R1');
-    cv2 = cov_values('PD');
-    bar(ax5,[cv1,cv2,cov_lit.R1'].*100);
-    ax5.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
-    ax5.YAxis.TickLabelFormat = '%g%%';
-    dc1 = diff_covs('R1');
-    dc2 = diff_covs('PD');
-    for i=1:4
-        if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax5,i-.3,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
-        if abs(dc2(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax5,i,cv2(i)*102,num2str(dc2(i)*100,ft),'rotation', 90);
-    end
-    legend(ax5,{'CoV R1','CoV PD','literature'},'Location','southoutside','Orientation','horizontal');
-        
-    cv1 = cov_values('R2s');
-    cv2 = cov_values('R2s_OLS');
-    bar(ax6,[cv1,cv2,cov_lit.R2'].*100);
+    bar(ax6,[cv1,cov_lit.R1'].*100);
     ax6.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
     ax6.YAxis.TickLabelFormat = '%g%%';
-    dc1 = diff_covs('R2s');
-    dc2 = diff_covs('R2s_OLS');
+    dc1 = diff_covs('R1');
     for i=1:4
         if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax6,i-.3,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
-        if abs(dc2(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax6,i,cv2(i)*102,num2str(dc2(i)*100,ft),'rotation', 90);
+        text(ax6,i-.2,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
     end
-    legend(ax6,{'CoV R2*','CoV R2* E','literature'},'Location','southoutside','Orientation','horizontal');
+    legend(ax6,{'CoV R1','THS'},'Location','southoutside','Orientation','horizontal');
+        
+    cv1 = cov_values('R2s_OLS');
+    bar(ax7,[cv1,cov_lit.R2'].*100);
+    ax7.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
+    ax7.YAxis.TickLabelFormat = '%g%%';
+    dc1 = diff_covs('R2s_OLS');
+    for i=1:4
+        if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
+        text(ax7,i-.2,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
+    end
+    legend(ax7,{'CoV R2*','THS'},'Location','southoutside','Orientation','horizontal');
     
     cv1 = cov_values('MT');
-    cv2 = cov_values('T1w');
-    b=bar(ax7,[cv1,cov_lit.MT',cv2,cov_lit.T1'].*100);
-    b(2).FaceColor = 'y';
-    ax7.YAxis.TickLabelFormat = '%g%%';
-    ax7.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
+    b=bar(ax8,[cv1,cov_lit.MT'].*100);
+    ax8.YAxis.TickLabelFormat = '%g%%';
+    ax8.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
     dc1 = diff_covs('MT');
-    dc2 = diff_covs('T1w');
     for i=1:4
         if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax7,i-.3,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
-        if abs(dc2(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-        text(ax7,i+.1,cv2(i)*102,num2str(dc2(i)*100,ft),'rotation', 90);
+        text(ax8,i-.2,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
     end
-    legend(ax7,[b(1),b(3),b(4)],{'CoV MT','CoV T1w','literature'},'Location','southoutside','Orientation','horizontal');
+    legend(ax8,{'CoV MT','THS'},'Location','southoutside','Orientation','horizontal');
     
-%     cv1 = cov_values('MT');
-%     b=bar(ax7,[cv1,cov_lit.MT'].*100);
-%     b(2).FaceColor = 'y';
-%     ax7.YAxis.TickLabelFormat = '%g%%';
-%     ax7.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
-%     dc1 = diff_covs('MT');
-%     for i=1:4
-%         if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
-%         text(ax7,i-.3,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
-%     end
-%     legend(ax7,[b(1),b(2)],{'CoV MT','literature'},'Location','southoutside','Orientation','horizontal');
+    cv1 = cov_values('PD');
+    b=bar(ax9,[cv1,cov_lit.PD'].*100);
+    ax9.YAxis.TickLabelFormat = '%g%%';
+    ax9.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
+    dc1 = diff_covs('PD');
+    for i=1:4
+        if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
+        text(ax9,i-.2,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
+    end
+    legend(ax9,{'CoV PD','THS'},'Location','southoutside','Orientation','horizontal');
+    
+    cv1 = cov_values('T1w');
+    b=bar(ax10,[cv1,cov_lit.T1'].*100);
+    ax10.YAxis.TickLabelFormat = '%g%%';
+    ax10.XTickLabel = {'GM' 'CN' 'WM' 'CC'};
+    dc1 = diff_covs('T1w');
+    for i=1:4
+        if abs(dc1(i))*100>=100, ft = '%+.0f%%'; else, ft = '%+.2g%%'; end
+        text(ax10,i-.2,cv1(i)*102,num2str(dc1(i)*100,ft),'rotation', 90);
+    end
+    legend(ax10,{'CoV T1','THS'},'Location','southoutside','Orientation','horizontal');
  
-    
-    cnr1 = cnr_values('GMWM');
-    cnr2 = cnr_values('ThGMWM');
-    cnr3 = cnr_values('HippoGMWM');    
-    bar(ax8,[cnr1,cnr2,cnr3]);
-    ax8.XTickLabel = {'R1','PD','R2*','R2* E','MT' 'T1w'};
-    legend(ax8,{'wholebrain GM/WM CNR' 'GM/WM CNR near thalamus' 'GM/WM CNR near Hippocampi'},'Location','southoutside','Orientation','horizontal');
+%     cnr1 = cnr_values('GMWM');
+%     bar(ax8,cnr1);
+%     ax8.XTickLabel = {'R1','PD','R2*','R2* E','MT' 'T1w'};
+%     legend(ax8,'wholebrain GM/WM CNR','Location','southoutside','Orientation','horizontal');
     
     saveas(h,'MPMqlt_full.png');
     close(h);
