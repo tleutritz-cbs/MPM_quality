@@ -10,7 +10,7 @@ function mpm_quality_multiecho_data_atlas_ROI_v4(pnames)
 % control tool. PLOS one 2017, doi:10.1371/journal.pone.0184661
 % 2019-08-01: fix CNR calc., which was only done for last echo
 
-mpm_qlt_name = 'MPM_Quality3';
+mpm_qlt_name = 'MPM_Quality4';
 med_qlt_name = 'MultiEchoData_Qlt';
 % flags.dtype=16;%'float32';
 
