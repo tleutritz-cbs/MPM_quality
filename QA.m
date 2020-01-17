@@ -2,8 +2,8 @@ function QA(DICOM_path)
 [cp,~,~] = fileparts(mfilename('fullpath'));
 atlas_ROI_dir = fullfile(cp,'ROIs');
 %% DICOM conversion and protocol check
-%convert_DICOM(DICOM_path);
-NIFTI_path = DICOM_path;%fullfile(fileparts(DICOM_path),'NIFTI');
+convert_DICOM(DICOM_path);
+NIFTI_path = fullfile(fileparts(DICOM_path),'NIFTI');
 rename_folders(NIFTI_path) % for a nicer order
 [inputs,vendor] = check_protocol_and_create_inputs(NIFTI_path);
 %% auto-reorient data for better segmentation
