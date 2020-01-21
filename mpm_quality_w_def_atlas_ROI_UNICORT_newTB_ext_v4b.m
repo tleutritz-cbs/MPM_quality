@@ -44,9 +44,9 @@ parf = 'hMRI_map_creation_mpm_params.json';
 
 % define ROIs and MPM names for evaluation
 ROI.name = {'GM' 'WM' 'GM_CN'  'WM_CC' ...
-            'WM_CST' 'GM_S1' 'GM_thalamus' 'WM_thalamus' 'GM_M1' ...
-            'GM_cerebellum' 'WM_cerebellum' 'GM_M1S1' ...
-            'GM_Hippocampi' 'WM_Hippocampi' 'wholebrain'};
+            'WM_CST' 'GM_S1' 'GM_M1' ...
+            'GM_cerebellum' 'WM_cerebellum' ...
+            'GM_Hippocampi' 'wholebrain'};
 pos.wb = numel(ROI.name);
 
 
@@ -279,9 +279,9 @@ for pn = 1:npth
             
             % calculate difference to literature
             switch cn
-                case {1,6,8,9,10,12,14}
+                case {1,6,7,8,10}
                     cp = 1;
-                case {2,5,7,11,13,15,16}
+                case {2,5,9}
                     cp = 3;
                 case 3
                     cp = 2;
