@@ -13,7 +13,7 @@ fid = fopen(fullfile(NIFTI_path,'inputs.txt'),'w+');
 for n=2:8, fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); end
 %% auto-reorient data for better segmentation
 fprintf('==== reorient to MNI templates ====\n')
-inputs = copy_input_files(NIFTI_path,inputs,'AR')
+inputs = copy_input_files(NIFTI_path,inputs,'AR');
 auto_reorient(inputs);
 fid = fopen(fullfile(NIFTI_path,'inputs_AR.txt'),'w+');
 for n=2:8, fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); end

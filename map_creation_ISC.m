@@ -1,4 +1,4 @@
-function map_creation(inputs,vendor,RFflag,B1flag)
+function map_creation_ISC(inputs,vendor,RFflag,B1flag)
 % caller function for choosing the correct processing pipeline depending on
 % available input and vendor specific defaults/B1 mapping
 switch vendor
