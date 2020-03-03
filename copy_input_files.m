@@ -13,6 +13,14 @@ for inp_ind = 2:8
         new_path = fullfile(ar,cur_path(fs_ind(end):end));
         new_file = fullfile(new_path,strcat(cur_file,ext));
         old_file = fullfile(cur_path,strcat(cur_file,ext));
+        if (inp_ind == 7) && (fil_ind == 1) % replace 1st PDw filename with PatientID as basename of MPMs
+            patID = get_metadata_val(old_file,'PatientID');
+            if iscell(patID)
+                patID = patID{1};
+            end
+            patID = deblank(patID);
+            new_file = strrep(new_file,spm_file(new_file,'basename'),patID); 
+        end
         if contains(new_file,',1')
             new_file = strrep(new_file,',1','');
             old_file = strrep(old_file,',1','');
