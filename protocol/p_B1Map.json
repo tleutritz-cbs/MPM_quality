@@ -114,7 +114,7 @@
 			"IntervalsRejected": 0,
 			"HeartRate": 0,
 			"ReconstructionDiameter": 230.000003814697,
-			"ReceiveCoilName": "SENSE-NV-16 ",
+			"ReceiveCoilName": "MULTI",
 			"TransmitCoilName": "B ",
 			"AcquisitionMatrix": [0,64,68,0],
 			"InPlanePhaseEncodingDirection": "ROW ",

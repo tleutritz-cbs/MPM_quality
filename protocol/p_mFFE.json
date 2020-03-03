@@ -115,7 +115,7 @@
 			"IntervalsRejected": 0,
 			"HeartRate": 0,
 			"ReconstructionDiameter": 192,
-			"ReceiveCoilName": "MULTI COIL",
+			"ReceiveCoilName": "MULTI",
 			"TransmitCoilName": "BODY",
 			"AcquisitionMatrix": [0,384,384,0],
 			"InPlanePhaseEncodingDirection": "ROW ",
