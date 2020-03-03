@@ -31,7 +31,7 @@ end
 protocol_list.s = {'rf_map' 'head' 'body' 'MT' 'PD' 'T1' ...
     't1_tse_sag' 't2_tse_sag' 't2_tse_tra' 'MEDIC'};
 protocol_list.p = {'B1Map' 'head' 'body' 'MTw' 'PDw' 'T1w' ...
-    'T1w_TSE' 'T2w_sag' 'T2w_tra' 'mFFE'};
+    'T1w_TSE' 'T2W_mDixon' 'T2w_TSE' 'mFFE'};
 tolerance = 0.0001; % tolerance for checking numbers
 map_folder = 'maps'; % folder for map creation output
 [cp,~,~] = fileparts(mfilename('fullpath'));
