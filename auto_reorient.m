@@ -16,8 +16,9 @@ str.ot2 = '                                                };\n';
 str.dir = 'matlabbatch{%i}.spm.tools.hmri.autoreor.output.indir = ''yes'';\n';
 str.dep = 'matlabbatch{%i}.spm.tools.hmri.autoreor.dep = ''individual'';\n';
 for crun = 1:nrun
+    ref_file = char(inputs{6,crun}(1));
     if filesep == '\'
-        ref_file = strrep(char(inputs{6,crun}(1)),'\','\\');
+        ref_file = strrep(ref_file,'\','\\');
     end
     fprintf(fid,sprintf(str.ref,crun,ref_file));
     fprintf(fid,sprintf(str.tpl,crun,template));
@@ -33,8 +34,9 @@ for crun = 1:nrun
         end
     end
     for cf = 1:numel(other)
+        oth_file = char(other(cf));
         if filesep == '\'
-            oth_file = strrep(char(other(cf)),'\','\\');
+            oth_file = strrep(oth_file,'\','\\');
         end
         fprintf(fid,sprintf(str.otf,oth_file));
     end
