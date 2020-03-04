@@ -125,7 +125,7 @@ for pn = 1:npth
                 firstfile = dir(fullfile(cpn,AName{nt2w},'*.nii'));
                 firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
                 metadata = get_metadata(firstfile);
-                if (metadata{1,1}.acqpar.ReconstructionNumberMR == 1) && contains(lower(metadata{1,1}.acqpar.SliceOrientation),curr_seq_name(end-2:end))
+                if contains(lower(PName),curr_seq_name)
                     POccur.(curr_seq_name)(nt2w) = 1;
                     break
                 end
@@ -510,9 +510,13 @@ for nvc = 1:numel(num_val)
         end
     elseif (vendor == 'p') && (contains(cval,'Rows') || contains(cval,'Columns'))
         tv = get_metadata_val(prot,cval);
-        tv = tv{1};
+        if iscell(tv)
+            tv = tv{1};
+        end
         av = get_metadata_val(json,cval);
-        av = av{1};
+        if iscell(av)
+            av = av{1};
+        end
     elseif contains(cval,'PixelSpacing')
         tv = get_metadata_val(prot,'PixelSpacing');
         av = get_metadata_val(json,'PixelSpacing');
@@ -536,6 +540,10 @@ for nvc = 1:numel(num_val)
     end
     protocol_settings.(cprn).num.(cval).actual = av;
     protocol_settings.(cprn).num.(cval).reference = tv;
+    if isempty(av)
+        fprintf(fid,'<font color="red">Missing parameter ''%s'' in metadata - please check pseudonymization process!</font><br>\n',cval);
+        continue
+    end
     if ~tolchk(av,tv,tolerance)
         fprintf(fid,['<font color="red">Mismatch of %s:',...
             ' actual value is %5.2f instead of %5.2f (deviation of %3.2f%%).</font><br>\n'],...
@@ -553,6 +561,10 @@ end
 for svc = 1:numel(str_val)
     cval = str_val{svc};
     av = get_metadata_val(json,cval);
+    if isempty(av)
+        fprintf(fid,'<font color="red">Missing parameter ''%s'' in metadata - please check pseudonymization process!</font><br>\n',cval);
+        continue
+    end
     protocol_settings.(cprn).str.(cval).actual = av;
     tv = get_metadata_val(prot,cval);
     protocol_settings.(cprn).str.(cval).reference = tv;
