@@ -106,9 +106,10 @@ for pn = 1:npth
                 mnames{mn} = fullfile(strrep(curdir,'Results','MPMCalc'), ...
                     strcat(map.name_prefix{mn},bn,'_MTsat_outer_suppressed.nii'));
                 idefcheck; % call function to check/create inverse deformation field
-            elseif isempty(dir('c1*')) % create segmentations when missing
-                create_seg_from_map(fullfile(curdir,strcat(bn,'_MTsat.nii')));
-            elseif ~isempty(dir('c1*')) 
+            else
+                if isempty(dir('c1*')) % create segmentations when missing
+                    create_seg_from_map(fullfile(curdir,strcat(bn,'_MTsat.nii')));
+                end
                 % basename of files
                 bnf = dir('c1*');
                 bnc = strrep(bnf.name,'c1','');
