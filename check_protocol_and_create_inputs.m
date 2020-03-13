@@ -31,7 +31,7 @@ end
 protocol_list.s = {'rf_map' 'head' 'body' 'MT' 'PD' 'T1' ...
     't1_tse_sag' 't2_tse_sag' 't2_tse_tra' 'MEDIC'};
 protocol_list.p = {'B1Map' 'head' 'body' 'MTw' 'PDw' 'T1w' ...
-    'T1w_TSE' 'T2W_mDixon' 'T2w_TSE' 'mFFE'};
+    'T1w_TSE' 'T2W_mDixon' 'T2w_TSE' 'mFFE' 'B1map120' 'B1map60'};
 tolerance = 0.0001; % tolerance for checking numbers
 map_folder = 'maps'; % folder for map creation output
 [cp,~,~] = fileparts(mfilename('fullpath'));
@@ -50,7 +50,7 @@ if ~exist(protocol_standard_file,'file')
                 for curr_seq = 1:numel(protocol_list.p)
                     seq_name = protocol_list.p{curr_seq};
                     switch curr_seq
-                        case {1 2 3 7 8 9 10}
+                        case {1 2 3 7 8 9 10 11 12}
                             protocol_standard.(cell2mat(vk)).(seq_name) = ...
                                 get_metadata(strcat(protpath,filesep,cell2mat(vk),'_',seq_name,'.json'));
                         case {4 5 6}
@@ -110,11 +110,32 @@ for pn = 1:npth
     nos = numel(AName); % number of apparent sequence folders
     nms = 0; % counter for missing sequences
     all_ok = true; % initialize overall check variable
-    slc = 1:6; % counter for input creation
+    slc = [1:6,11:12]; % counter for input creation
     % find locations of the protocol names
     for prn = 1:nop
         curr_seq_name = cvl{prn}; % short name of protocol to check for
         POccur.(curr_seq_name) = contains(lower(PName),lower(curr_seq_name));
+        if contains(lower(curr_seq_name),'b1map') && (vcd == 'p')
+            % go through different folders
+            B1maps = contains(lower(PName),'b1map');
+            for nb1 = 1:numel(PName)
+                if ~B1maps(nb1) % skip non B1maps
+                    continue
+                end
+                firstfile = dir(fullfile(cpn,AName{nb1},'*.nii'));
+                firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
+                prep_typ = get_metadata_val(firstfile,'PrepulseType');
+                if (prn == 1) && (contains(prep_typ,'NO'))
+                    POccur.(curr_seq_name)(nb1) = 1;
+                    break
+                elseif (prn >= 11) && contains(prep_typ,'SAT') && ...
+                        contains(lower(PName(nb1)),lower(curr_seq_name))
+                    POccur.(curr_seq_name)(nb1) = 1;
+                else
+                    POccur.(curr_seq_name)(nb1) = 0;
+                end
+            end
+        end
         if contains(lower(curr_seq_name),'t2w') && (vcd == 'p')
             % go through different folders
             T2ws = contains(lower(PName),'t2w');
@@ -122,9 +143,6 @@ for pn = 1:npth
                 if ~T2ws(nt2w) % skip non T2ws
                     continue
                 end
-                firstfile = dir(fullfile(cpn,AName{nt2w},'*.nii'));
-                firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
-                metadata = get_metadata(firstfile);
                 if contains(lower(PName),curr_seq_name)
                     POccur.(curr_seq_name)(nt2w) = 1;
                     break
@@ -211,7 +229,7 @@ for pn = 1:npth
         if ~PNum.(curr_seq_name) % count missing ones
             nms = nms + 1;
             missing{nms} = curr_seq_name; %#ok<AGROW>
-            if prn < 7
+            if (prn < 7) || (prn >= 11)
                 slc(slc == prn) = []; % delete from sequence list counter
             end
         else
@@ -286,9 +304,13 @@ for pn = 1:npth
     
     %% prepare inputs file
     inputs{1,pn} = {fullfile(fileparts(cpn),map_folder)};
+    if (vcd == 's')
+        slc(slc == 11) = [];
+        slc(slc == 12) = [];
+    end
     for prn = slc % loop over brain protocols to create input for map creation
         curr_seq_name = cvl{prn};
-        if prn < 4 % loop only for B1 + RF sens
+        if (prn < 4) || (prn >= 11) % loop only for B1 + RF sens
             nps = numel(PPos.(curr_seq_name));
         else
             nps = 1; % use only unfiltered Siemens inputs
@@ -310,10 +332,18 @@ for pn = 1:npth
                 end
             elseif contains(lower(curr_seq_name),'map') && (vcd == 'p')
                 for fcb1 = 1:numel(nfi)
-                    if contains(get_metadata_val(nfi{fcb1},'imtype'),'M_B1')
-                        inputs{5,pn}{2,1} = char(nfi{fcb1});
-                    elseif contains(get_metadata_val(nfi{fcb1},'imtype'),'M_FFE')
-                        inputs{5,pn}{1,1} = char(nfi{fcb1});
+                    if contains(get_metadata_val(nfi{fcb1},'PrepulseType'),'NO')
+                        if contains(get_metadata_val(nfi{fcb1},'imtype'),'M_B1')
+                            inputs{5,pn}{2,1} = char(nfi{fcb1});
+                        elseif contains(get_metadata_val(nfi{fcb1},'imtype'),'M_FFE')
+                            inputs{5,pn}{1,1} = char(nfi{fcb1});
+                        end
+                    elseif contains(get_metadata_val(nfi{fcb1},'PrepulseType'),'SAT')
+                        if get_metadata_val(nfi{fcb1},'FlipAngle') == 60
+                            inputs{5,pn}{2,1} = char(nfi{fcb1});
+                        elseif get_metadata_val(nfi{fcb1},'FlipAngle') == 120
+                            inputs{5,pn}{1,1} = char(nfi{fcb1});
+                        end
                     end
                 end
             elseif contains(curr_seq_name,'head') && (vcd == 'p')
@@ -485,7 +515,7 @@ else
             end
         case {'B1Map'}
             num_val = {'SliceThickness' 'RepetitionTime' 'NumberOfAverages' ...
-                'NumberOfPhaseEncodingSteps' ...
+                'NumberOfPhaseEncodingSteps' 'FlipAngle' ...
                 'PercentSampling' 'PercentPhaseFieldOfView' 'MT'};
             str_val = {'ReceiveCoilName' 'ScanningSequence' 'SequenceVariant' ...
                 'PhaseEncodingDirection'}; % 'PulseSequenceName'
@@ -509,7 +539,7 @@ for nvc = 1:numel(num_val)
         if iscell(av)
             av = av{contains(av_src,'asSlice')};
         end
-    elseif (vendor == 'p') && (contains(cval,'Rows') || contains(cval,'Columns'))
+    elseif (vendor == 'p')
         tv = get_metadata_val(prot,cval);
         if iscell(tv)
             tv = tv{1};
@@ -562,6 +592,9 @@ end
 for svc = 1:numel(str_val)
     cval = str_val{svc};
     av = get_metadata_val(json,cval);
+    if iscell(av)
+        av = av{1};
+    end
     if isempty(av)
         fprintf(fid,'<font color="red">Missing parameter ''%s'' in metadata - please check pseudonymization process!</font><br>\n',cval);
         continue

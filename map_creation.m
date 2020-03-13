@@ -7,8 +7,15 @@ switch vendor
             loc_conf = 'hmri_local_defaults_NISCI_THS_PH_UNICORT_all';% set UNICORT defaults
             job_fn = sprintf('u_%s_job.m',RFflag.name);
         else
-            loc_conf = 'hmri_local_defaults_NISCI_THS_PH_thrA10e8'; % set B1 mapping defaults
-            job_fn = sprintf('p_%s_job.m',RFflag.name);
+            prep_type = get_metadata_val(inputs{5,1}{1,1},'PrepulseType');
+            switch deblank(prep_type)
+                case 'NO' % Yarnikh B1 mapping
+                    loc_conf = 'hmri_local_defaults_NISCI_THS_PH_thrA10e8'; % set B1 mapping defaults
+                    job_fn = sprintf('p_%s_job.m',RFflag.name);
+                case 'SAT' % saturated double angle method -> likely no CSK for MT as well
+                    loc_conf = 'hmri_local_defaults_NISCI_THS_PH_thrA10e8_MT30'; % set B1 mapping defaults
+                    job_fn = sprintf('p_SDAM_%s_job.m',RFflag.name);
+            end
         end
     case 's'
         if contains(B1flag,'noB1')
