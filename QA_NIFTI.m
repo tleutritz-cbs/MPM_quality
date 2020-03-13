@@ -8,19 +8,19 @@ fprintf('==== check protocol parameters ====\n')
 [inputs,vendor] = check_protocol_and_create_inputs(NIFTI_path);
 fprintf('==== report written to %s ====\n',fullfile(fileparts(NIFTI_path),'protocol_check.htm'))
 fid = fopen(fullfile(NIFTI_path,'inputs.txt'),'w+');
-for n=2:8, fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); end
+for n=2:8, try fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); catch err, end, end
 %% auto-reorient data for better segmentation
 fprintf('==== reorient to MNI templates ====\n')
 inputs = copy_input_files(NIFTI_path,inputs,'AR');
 auto_reorient(inputs);
 fid = fopen(fullfile(NIFTI_path,'inputs_AR.txt'),'w+');
-for n=2:8, fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); end
+for n=2:8, try fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); catch err, end, end
 %% head-masking input data
 fprintf('==== head mask data ====\n')
 create_head_mask2(inputs{8,1}{1},0.4,10,false,true)
 inputs = head_mask_input_data(NIFTI_path,inputs);
 fid = fopen(fullfile(NIFTI_path,'inputs_HM.txt'),'w+');
-for n=2:8, fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); end
+for n=2:8, try fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); catch err, end, end
 %% map creation depending on input
 fprintf('==== create quantitative maps ====\n')
 empty = zeros(1:5); B1flag = 'B1';
@@ -43,7 +43,7 @@ map_creation(inputs,vendor,RFflag,B1flag)
 %% map and multi-echo data quality
 % unzip ROIs
 gunzip_or_gzip(atlas_ROI_dir,'nii')
-% run mpm_quality script depending on B1 mapping method used
+%% run mpm_quality script depending on B1 mapping method used
 fprintf('==== running ROI based QA on maps ====\n')
 if contains(B1flag,'noB1')
     mpm_quality_w_def_atlas_ROI_UNICORT_newTB_ext_v4b(fullfile(fileparts(NIFTI_path),'maps','Results'))
