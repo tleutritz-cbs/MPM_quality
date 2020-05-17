@@ -281,26 +281,6 @@ for pn = 1:npth
             end
         end
     end
-    %% give feedback about the presence of the protocols
-    fprintf(fid,'<h2><a id="summary">2. Summary of protocol check and output</a></h2>\n');
-    if PNum.(cvl{1}) && (PNum.(cvl{2}) >= 3) && (PNum.(cvl{3}) >= 3) && ...
-            PNum.(cvl{4}) && PNum.(cvl{5}) && PNum.(cvl{6}) && ...
-            PNum.(cvl{7}) && PNum.(cvl{8}) && PNum.(cvl{9}) && PNum.(cvl{10})
-        fprintf(fid,'<font color="green">Data from all sequences present.</font><br>\n');
-    elseif (PNum.(cvl{2}) < 3) && (PNum.(cvl{3}) < 3)
-        fprintf(fid,'<font color="red">RF sensitivity maps not acquired for all 3 MPMs.<br>\n');
-        fprintf(fid,'Switch to RF sensitivity correction with single measurement.</font><br>\n');
-    end
-    if nms
-        for cix = 1:nms
-            fprintf(fid,'<font color="red">The sequence "%s" is missing.</font><br>\n',missing{cix});
-        end
-    end
-    if ~all_ok
-        fprintf(fid,['<font color="red">There were protocol deviations, '...
-            'which have to be checked - see red lines in section ' ...
-            '<a href="#protcheck">Checks per sequence and parameter</a>.</font><br>\n']);
-    end
     
     %% prepare inputs file
     inputs{1,pn} = {fullfile(fileparts(cpn),map_folder)};
@@ -338,11 +318,30 @@ for pn = 1:npth
                         elseif contains(get_metadata_val(nfi{fcb1},'imtype'),'M_FFE')
                             inputs{5,pn}{1,1} = char(nfi{fcb1});
                         end
+                        % delete missing SDAM sequences from list because
+                        % of supplement with Clinical Science Key
+                        miss_pos = strcmp(missing,'B1map120');
+                        if sum(miss_pos)
+                            nms = nms - 1;
+                            missing = missing(~miss_pos);
+                        end
+                        miss_pos = strcmp(missing,'B1map60');
+                        if sum(miss_pos)
+                            nms = nms - 1;
+                            missing = missing(~miss_pos);
+                        end
                     elseif contains(get_metadata_val(nfi{fcb1},'PrepulseType'),'SAT')
                         if get_metadata_val(nfi{fcb1},'FlipAngle') == 60
                             inputs{5,pn}{2,1} = char(nfi{fcb1});
                         elseif get_metadata_val(nfi{fcb1},'FlipAngle') == 120
                             inputs{5,pn}{1,1} = char(nfi{fcb1});
+                        end
+                        miss_pos = strcmp(missing,'B1Map');
+                        miss_pos_SDAM120 = strcmp(missing,'B1map120');
+                        miss_pos_SDAM60 = strcmp(missing,'B1map120');
+                        if sum(miss_pos) && ~sum(miss_pos_SDAM120) && ~sum(miss_pos_SDAM60)
+                            nms = nms - 1;
+                            missing = missing(~miss_pos);
                         end
                     end
                 end
@@ -394,6 +393,27 @@ for pn = 1:npth
                 inputs{8,pn} = nfi;
             end
         end
+    end
+    
+    %% give feedback about the presence of the protocols
+    fprintf(fid,'<h2><a id="summary">2. Summary of protocol check and output</a></h2>\n');
+    if PNum.(cvl{1}) && (PNum.(cvl{2}) >= 3) && (PNum.(cvl{3}) >= 3) && ...
+            PNum.(cvl{4}) && PNum.(cvl{5}) && PNum.(cvl{6}) && ...
+            PNum.(cvl{7}) && PNum.(cvl{8}) && PNum.(cvl{9}) && PNum.(cvl{10})
+        fprintf(fid,'<font color="green">Data from all sequences present.</font><br>\n');
+    elseif (PNum.(cvl{2}) < 3) && (PNum.(cvl{3}) < 3)
+        fprintf(fid,'<font color="red">RF sensitivity maps not acquired for all 3 MPMs.<br>\n');
+        fprintf(fid,'Switch to RF sensitivity correction with single measurement.</font><br>\n');
+    end
+    if nms
+        for cix = 1:nms
+            fprintf(fid,'<font color="red">The sequence "%s" is missing.</font><br>\n',missing{cix});
+        end
+    end
+    if ~all_ok
+        fprintf(fid,['<font color="red">There were protocol deviations, '...
+            'which have to be checked - see red lines in section ' ...
+            '<a href="#protcheck">Checks per sequence and parameter</a>.</font><br>\n']);
     end
     
     %% write data to files
