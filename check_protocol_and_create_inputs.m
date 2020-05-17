@@ -601,8 +601,11 @@ for svc = 1:numel(str_val)
     end
     protocol_settings.(cprn).str.(cval).actual = av;
     tv = get_metadata_val(prot,cval);
+    if contains(cval,'Coil') && (~contains(lower(tv),'b') && ~contains(lower(av),lower(tv)))
+        tv = 'SENSE'; % alternative coil name
+    end
     protocol_settings.(cprn).str.(cval).reference = tv;
-    if ~contains(lower(av),lower(tv)) || (contains(cval,'Coil') && (~contains(lower(tv),'b') && contains(lower(av),'b')))
+    if ~contains(lower(av),lower(tv))
         fprintf(fid,'<font color="red">Mismatch of %s: actual value is "%s" instead of "%s".</font><br>\n',...
             cval, av, tv);
         check_not_okay = check_not_okay + 1;
