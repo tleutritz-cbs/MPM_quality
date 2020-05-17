@@ -10,7 +10,7 @@ fprintf('NIFTI directory: %s\n',NIFTI_path)
 rename_folders(NIFTI_path) % for a nicer order
 fprintf('==== check protocol parameters ====\n')
 [inputs,vendor] = check_protocol_and_create_inputs(NIFTI_path);
-fprintf('==== report written to %s ====\n',fullfile(fileparts(NIFTI_path),'protocol_check.htm'))
+fprintf('==== report written to %s ====\n',fullfile(NIFTI_path,'protocol_check.htm'))
 fid = fopen(fullfile(NIFTI_path,'inputs.txt'),'w+');
 for n=2:8, try fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); catch err, end, end
 %% auto-reorient data for better segmentation
