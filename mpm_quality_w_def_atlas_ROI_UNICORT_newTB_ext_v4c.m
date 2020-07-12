@@ -10,7 +10,6 @@ function mpm_quality_w_def_atlas_ROI_UNICORT_newTB_ext_v4b(pnames)
 
 % get files to be analyzed (segmented data from subjects, each in a folder)
 %pnames = cfg_getfile(Inf,'dir','Select folders with segmented MPM images to analyse');
-% pnames = '/NOBACKUP/ZH/ROI/test_data';
 % get number of selected path 
 [npth,~] = size(pnames);
 
@@ -359,16 +358,6 @@ for pn = 1:npth
         cnr_value.(mpname).GMWM = abs(mean_value.(mpname).GM - ...
             mean_value.(mpname).WM)/sqrt(std_value.(mpname).GM^2 + ...
             std_value.(mpname).WM^2);
-        
-        % interior WM/GM CNR in Thalamus
-        cnr_value.(mpname).ThGMWM = abs(mean_value.(mpname).GM_thalamus - ...
-            mean_value.(mpname).WM_thalamus)/sqrt(std_value.(mpname).GM_thalamus^2 + ...
-            std_value.(mpname).WM_thalamus^2);
-        
-        % exterior GM/WM CNR from Hippocampus
-        cnr_value.(mpname).HippoGMWM = abs(mean_value.(mpname).GM_Hippocampi - ...
-            mean_value.(mpname).WM_Hippocampi)/sqrt(std_value.(mpname).GM_Hippocampi^2 + ...
-            std_value.(mpname).WM_Hippocampi^2);
     end    
     
 %     %% create figure of regional values
@@ -597,10 +586,8 @@ for pn = 1:npth
     end
     legend(ax7,[b(1),b(3),b(4)],'CoV MT','CoV T1w','literature','Location','southoutside','Orientation','horizontal');
     
-    cnr1 = cnr_values('GMWM');
-    cnr2 = cnr_values('ThGMWM');
-    cnr3 = cnr_values('HippoGMWM');    
-    bar(ax8,[cnr1,cnr2,cnr3]);
+    cnr1 = cnr_values('GMWM');    
+    bar(ax8,cnr1);
     ax8.XTickLabel = {'R1','R1 U','R2*','R2* E','MT','T1w','PD'};
     legend(ax8,'GM/WM CNR','Location','southoutside','Orientation','horizontal');
     

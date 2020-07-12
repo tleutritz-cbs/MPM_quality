@@ -6,7 +6,7 @@ fprintf('NIFTI directory: %s\n',NIFTI_path)
 rename_folders(NIFTI_path) % for a nicer order
 fprintf('==== check protocol parameters ====\n')
 [inputs,vendor] = check_protocol_and_create_inputs(NIFTI_path);
-fprintf('==== report written to %s ====\n',fullfile(fileparts(NIFTI_path),'protocol_check.htm'))
+fprintf('==== report written to %s ====\n',fullfile(NIFTI_path,'protocol_check.htm'))
 fid = fopen(fullfile(NIFTI_path,'inputs.txt'),'w+');
 for n=2:8, try fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); catch err, end, end
 %% auto-reorient data for better segmentation
@@ -46,7 +46,7 @@ gunzip_or_gzip(atlas_ROI_dir,'nii')
 %% run mpm_quality script depending on B1 mapping method used
 fprintf('==== running ROI based QA on maps ====\n')
 if contains(B1flag,'noB1')
-    mpm_quality_w_def_atlas_ROI_UNICORT_newTB_ext_v4b(fullfile(fileparts(NIFTI_path),'maps','Results'))
+    mpm_quality_w_def_atlas_ROI_UNICORT_newTB_ext_v4c(fullfile(fileparts(NIFTI_path),'maps','Results'))
 else
     mpm_quality_w_def_atlas_ROI_B1maps_newTB_ext_v4c(fullfile(fileparts(NIFTI_path),'maps','Results'))
 end
