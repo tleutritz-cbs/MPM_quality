@@ -98,6 +98,9 @@ for pn = 1:npth
     
     %% preset of protocol settings, which have to be checked
     firstfile = dir(fullfile(cpn,AName{1},'*.nii'));
+    if isempty(firstfile) % e.g. empty RF_map folder
+        firstfile = dir(fullfile(cpn,AName{2},'*.nii'));
+    end
     firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
     metadata = get_metadata(firstfile);
     vendor =  metadata{1,1}.acqpar.Manufacturer;
@@ -296,10 +299,10 @@ for pn = 1:npth
             nps = 1; % use only unfiltered Siemens inputs
         end
         for cc = 1:nps
+            cd(strcat(cpn,filesep,PName{PPos.(curr_seq_name){cc}}));
             if isempty(ls) % check if folder is empty (rf_map!)
                 continue
             end
-            cd(strcat(cpn,filesep,PName{PPos.(curr_seq_name){cc}}));
             nf = dir('*.nii');
             nfi = fullfile({nf.folder},{nf.name});
             nfi = reshape(nfi,[numel(nfi),1]);
