@@ -592,6 +592,16 @@ for nvc = 1:numel(num_val)
         tv = get_metadata_val(prot,'EchoTimes');
         tv = tv(echo_num);
     end
+    if contains(vendor,'s') && (contains(cval,'Rows') || contains(cval,'Columns'))
+        [av, av_src] = get_metadata_val(json,cval);
+        if iscell(av)
+            for n = 1:numel(av_src)
+                if ~contains(av_src{n},'Private')
+                    av = av{n};
+                end
+            end
+        end
+    end
     protocol_settings.(cprn).num.(cval).actual = av;
     protocol_settings.(cprn).num.(cval).reference = tv;
     if isempty(av)
