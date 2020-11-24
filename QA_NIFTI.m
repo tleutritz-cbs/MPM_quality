@@ -3,9 +3,30 @@ function QA_NIFTI(NIFTI_path)
 atlas_ROI_dir = fullfile(cp,'ROIs');
 %% protocol check
 fprintf('NIFTI directory: %s\n',NIFTI_path)
-rename_folders(NIFTI_path) % for a nicer order
 fprintf('==== check protocol parameters ====\n')
-[inputs,vendor] = check_protocol_and_create_inputs(NIFTI_path);
+% select all folders
+nf = dir(NIFTI_path);
+nf = nf([nf.isdir]);
+nf = fullfile({nf.folder},{nf.name});
+if numel(nf) > 3
+    fprintf('WARNING: please select a folder with scans from only one patient! \nOnly first Patient selected.');
+end
+nf = nf{3}; % select first patient folder
+nf = dir(nf);
+nf = fullfile({nf.folder},{nf.name});
+nf = {nf{3:end}}; % select scans
+NIFTI_folders = cell(1,1);
+for np = 1:numel(nf) % loop through scan folders to collect NIFTI folders
+    rename_folders(nf{np}) % for a nicer order
+    tmp = dir(nf{np}); 
+    tmp = fullfile({tmp.folder},{tmp.name});
+    tmp = {tmp{3:end}};
+    tmp = tmp';
+    NIFTI_folders = {NIFTI_folders{:},tmp{:}};
+end
+tmp = []; nf = [];
+NIFTI_folders = {NIFTI_folders{2:end}};
+[inputs,vendor] = check_protocol_and_create_inputs(NIFTI_folders,NIFTI_path);
 fprintf('==== report written to %s ====\n',fullfile(NIFTI_path,'protocol_check.htm'))
 fid = fopen(fullfile(NIFTI_path,'inputs.txt'),'w+');
 for n=2:8, try fprintf(fid,'%s\n%s\n',inputs{n,1}{1},inputs{n,1}{2}); catch err, end, end
