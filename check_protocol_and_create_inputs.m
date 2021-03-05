@@ -79,6 +79,11 @@ firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
 metadata = get_metadata(firstfile);
 vendor =  metadata{1,1}.acqpar.Manufacturer;
 PatID = metadata{1,1}.acqpar.PatientID;
+if ~isempty(get_metadata_val(firstfile,'InstitutionAddress'))
+    BCA = contains(get_metadata_val(firstfile,'InstitutionAddress'),'Barcelona');
+else
+    BCA = FALSE;
+end
 vcd = lower(vendor(1));
 cvl = protocol_list.(vcd);
 nop = numel(cvl);
@@ -152,9 +157,11 @@ for prn = 1:nop
             if contains(lower(PName(nt1w)),'body') || ...
                     contains(lower(PName(nt1w)),'head') || ...
                     contains(lower(PName(nt1w)),'lowres') || ...
-                    contains(lower(PName(nt1w)),'nosense') || ...
-                    contains(upper(PName(nt1w)),'RFR') % Barcelona naming
+                    contains(lower(PName(nt1w)),'nosense')
                 POccur.(curr_seq_name)(nt1w) = 0;
+                if (~contains(upper(PName(nt1w)),'RFR') && BCA) % Barcelona naming
+                    POccur.(curr_seq_name)(nt1w) = 1;
+                end
                 continue
             end
             firstfile = dir(fullfile(PathNames{nt1w},'*.nii'));
@@ -187,9 +194,11 @@ for prn = 1:nop
             if contains(lower(PName(pdw)),'body') || ...
                     contains(lower(PName(pdw)),'head') || ...
                     contains(lower(PName(pdw)),'lowres') || ...
-                    contains(lower(PName(pdw)),'nosense') || ...
-                    contains(upper(PName(pdw)),'RFR') % Barcelona naming
+                    contains(lower(PName(pdw)),'nosense')
                 POccur.(curr_seq_name)(pdw) = 0;
+                if (~contains(upper(PName(pdw)),'RFR') && BCA) % Barcelona naming
+                    POccur.(curr_seq_name)(pdw) = 1;
+                end
                 continue
             end
         end
@@ -204,17 +213,23 @@ for prn = 1:nop
                     contains(lower(PName(mtw)),'head') || ...
                     contains(lower(PName(mtw)),'lowres') || ...
                     contains(lower(PName(mtw)),'nosense') || ...
-                    contains(lower(PName(mtw)),'medic') || ...
-                    contains(upper(PName(mtw)),'RFR') % Barcelona naming
+                    contains(lower(PName(mtw)),'medic')
                 POccur.(curr_seq_name)(mtw) = 0;
+                if (~contains(upper(PName(mtw)),'RFR') && BCA) % Barcelona naming
+                    POccur.(curr_seq_name)(mtw) = 1;
+                end
                 continue
             end
         end
     end
     if strcmp(curr_seq_name,'head')
         ign = contains(lower(PName),'localizer') + ...
+            contains(lower(PName),'scout'); % ignore localizer
+        if BCA % Barcelona naming
+            ign = contains(lower(PName),'localizer') + ...
             contains(lower(PName),'scout') + ... % ignore localizer
-            contains(lower(PName),'body'); % Barcelona naming
+            contains(lower(PName),'body') + ~contains(lower(PName),'rfr'); 
+        end
         for cc = 1:numel(ign)
             if ign(cc)
                 POccur.head(cc) = 0;
