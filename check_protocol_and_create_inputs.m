@@ -25,6 +25,7 @@ global protocol_standard
 %% spm dialog to gather the folder(s) including subfolders with converted NIFTI files
 if nargin == 0
     PathNames = cfg_getfile(Inf,'dir','Select NiFTI folders containing data to be checked');
+    out_dir = cell2mat(cfg_getfile(1,'dir','Select output folder for report and input files'));
 end
 
 %% protocol and other presets
@@ -79,10 +80,10 @@ firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
 metadata = get_metadata(firstfile);
 vendor =  metadata{1,1}.acqpar.Manufacturer;
 PatID = metadata{1,1}.acqpar.PatientID;
-if ~isempty(get_metadata_val(firstfile,'InstitutionAddress'))
+try 
     BCA = contains(get_metadata_val(firstfile,'InstitutionAddress'),'Barcelona');
-else
-    BCA = FALSE;
+catch err
+    BCA = false;
 end
 vcd = lower(vendor(1));
 cvl = protocol_list.(vcd);
@@ -572,7 +573,7 @@ for nvc = 1:numel(num_val)
         if iscell(av)
             av = av{contains(av_src,'asSlice')};
         end
-    elseif (vendor == 'p')
+    elseif (vendor == 'p') && ~contains(cval,'PixelSpacing')
         tv = get_metadata_val(prot,cval);
         if iscell(tv)
             tv = tv{1};
