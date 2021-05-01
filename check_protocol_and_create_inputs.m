@@ -80,6 +80,7 @@ firstfile = fullfile(firstfile(1).folder,firstfile(1).name);
 metadata = get_metadata(firstfile);
 vendor =  metadata{1,1}.acqpar.Manufacturer;
 PatID = metadata{1,1}.acqpar.PatientID;
+BSL = contains(PatID,'BSL');
 try 
     BCA = contains(get_metadata_val(firstfile,'InstitutionAddress'),'Barcelona');
 catch err
@@ -112,7 +113,7 @@ nms = 0; % counter for missing sequences
 all_ok = true; % initialize overall check variable
 slc = [1:6,11:12]; % counter for input creation
 % find locations of the protocol names
-for prn = 1:nop
+for prn = 1:nop % collection of sequence occurences
     curr_seq_name = cvl{prn}; % short name of protocol to check for
     POccur.(curr_seq_name) = contains(lower(PName),lower(curr_seq_name));
     if contains(lower(curr_seq_name),'b1map') && (vcd == 'p')
@@ -160,7 +161,8 @@ for prn = 1:nop
                     contains(lower(PName(nt1w)),'lowres') || ...
                     contains(lower(PName(nt1w)),'nosense')
                 POccur.(curr_seq_name)(nt1w) = 0;
-                if (~contains(upper(PName(nt1w)),'RFR') && BCA) % Barcelona naming
+                if (~contains(upper(PName(nt1w)),'RFR') && BCA) || ... % Barcelona naming
+                        (~contains(upper(PName(nt1w)),'ND') && BSL)
                     POccur.(curr_seq_name)(nt1w) = 1;
                 end
                 continue
@@ -197,8 +199,12 @@ for prn = 1:nop
                     contains(lower(PName(pdw)),'lowres') || ...
                     contains(lower(PName(pdw)),'nosense')
                 POccur.(curr_seq_name)(pdw) = 0;
-                if (~contains(upper(PName(pdw)),'RFR') && BCA) % Barcelona naming
+                if (~contains(upper(PName(pdw)),'RFR') && BCA) || ... % Barcelona naming
+                        (~contains(upper(PName(pdw)),'ND') && BSL)
                     POccur.(curr_seq_name)(pdw) = 1;
+                end
+                if POccur.(curr_seq_name)(pdw) == 1
+                    POccur.head(pdw) = 0;
                 end
                 continue
             end
@@ -216,8 +222,12 @@ for prn = 1:nop
                     contains(lower(PName(mtw)),'nosense') || ...
                     contains(lower(PName(mtw)),'medic')
                 POccur.(curr_seq_name)(mtw) = 0;
-                if (~contains(upper(PName(mtw)),'RFR') && BCA) % Barcelona naming
+                if (~contains(upper(PName(mtw)),'RFR') && BCA) || ... % Barcelona naming
+                        (~contains(upper(PName(mtw)),'ND') && BSL)
                     POccur.(curr_seq_name)(mtw) = 1;
+                end
+                if POccur.(curr_seq_name)(mtw) == 1
+                    POccur.head(mtw) = 0;
                 end
                 continue
             end
@@ -231,6 +241,14 @@ for prn = 1:nop
             contains(lower(PName),'scout') + ... % ignore localizer
             contains(lower(PName),'body') + ~contains(lower(PName),'rfr'); 
         end
+        if BSL % BSL naming
+            ign = contains(lower(PName),'localizer') + ...
+            contains(lower(PName),'scout') + ... % ignore localizer
+            contains(lower(PName),'rf_map') + contains(upper(PName),'ND') + ...
+            contains(upper(PName),'HWS') + contains(lower(PName),'body') + ...
+            contains(upper(PName),'MT') + contains(upper(PName),'PD') + ...
+            contains(upper(PName),'T1');
+        end
         for cc = 1:numel(ign)
             if ign(cc)
                 POccur.head(cc) = 0;
@@ -241,6 +259,11 @@ for prn = 1:nop
         end
     end
     PNum.(curr_seq_name) = numel(nonzeros(POccur.(curr_seq_name))); % count occurences
+end
+%% going through occurences to check parameters
+for prn = 1:nop 
+    curr_seq_name = cvl{prn}; % short name of protocol to check for
+    
     if ~PNum.(curr_seq_name) % count missing ones
         nms = nms + 1;
         missing{nms} = curr_seq_name; %#ok<AGROW>
@@ -248,7 +271,6 @@ for prn = 1:nop
             slc(slc == prn) = []; % delete from sequence list counter
         end
     else
-        %% check protocol parameters
         nps = 0; % counter for position of current sequence in list
         % finding all occurences
         for cix = 1:nos
@@ -259,7 +281,7 @@ for prn = 1:nop
         end
         % going through all the appearances to check each and every p.
         if (prn > 3) && (prn < 7) % for multi-echo data:
-            nps = 1; % restrict following loop to first occurence only (i.e. unfiltered data)
+            nps = 1; % restrict following loop to first occurence only (i.e. unfiltered data [ND])
         end
         for cc = 1:nps
             cd(PName{PPos.(curr_seq_name){cc}});
@@ -281,6 +303,7 @@ for prn = 1:nop
                     break
                 end
                 cur_file = files{f_ind};
+                fprintf(fid,'Checking file "%s"<br>\n',strrep(cur_file,fileparts(cur_file),''));
                 if (prn > 3) && (prn < 7) % for multi-echo data:
                     [mtch,mismtch] = pcheck(vcd,curr_seq_name,cur_file,f_ind,tolerance,fid);
                 else
@@ -297,18 +320,23 @@ for prn = 1:nop
     end
 end
 
+if ~all_ok
+    msgbox('There were deviations of protocol settings. Please check them, before going on!','Check protocol settings!')
+end
+
 %% prepare inputs file
 inputs{1,1} = {fullfile(fileparts(out_dir),map_folder)};
 if (vcd == 's')
     slc(slc == 11) = [];
     slc(slc == 12) = [];
 end
-for prn = slc % loop over brain protocols to create input for map creation
+%% loop over brain protocols to create input for map creation
+for prn = slc 
     curr_seq_name = cvl{prn};
     if (prn < 4) || (prn >= 11) % loop only for B1 + RF sens
         nps = numel(PPos.(curr_seq_name));
     else
-        nps = 1; % use only unfiltered Siemens inputs
+        nps = 1; % use only unfiltered Siemens inputs (ND)
     end
     for cc = 1:nps
         cd(PName{PPos.(curr_seq_name){cc}});
@@ -361,43 +389,43 @@ for prn = slc % loop over brain protocols to create input for map creation
                 end
             end
         elseif contains(curr_seq_name,'head') && (vcd == 'p')
-            if PPos.(curr_seq_name){cc} == PPos.MTw{1} - 2
+            if PPos.(curr_seq_name){cc} <= PPos.MTw{1} - 2
                 inputs{2,1}{1,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.PDw{1} - 2
+            if PPos.(curr_seq_name){cc} <= PPos.PDw{1} - 2
                 inputs{3,1}{1,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.T1w{1} - 2
+            if PPos.(curr_seq_name){cc} <= PPos.T1w{1} - 2
                 inputs{4,1}{1,1} = char(nfi);
             end
         elseif contains(curr_seq_name,'head') && (vcd == 's')
-            if PPos.(curr_seq_name){cc} == PPos.MT{1} - 2
+            if PPos.(curr_seq_name){cc} <= PPos.MT{1} - 2
                 inputs{2,1}{1,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.PD{1} - 2
+            if PPos.(curr_seq_name){cc} <= PPos.PD{1} - 2
                 inputs{3,1}{1,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.T1{1} - 2
+            if PPos.(curr_seq_name){cc} <= PPos.T1{1} - 2
                 inputs{4,1}{1,1} = char(nfi);
             end
         elseif contains(curr_seq_name,'body') && (vcd == 'p')
-            if PPos.(curr_seq_name){cc} == PPos.MTw{1} - 1
+            if PPos.(curr_seq_name){cc} <= PPos.MTw{1} - 1
                 inputs{2,1}{2,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.PDw{1} - 1
+            if PPos.(curr_seq_name){cc} <= PPos.PDw{1} - 1
                 inputs{3,1}{2,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.T1w{1} - 1
+            if PPos.(curr_seq_name){cc} <= PPos.T1w{1} - 1
                 inputs{4,1}{2,1} = char(nfi);
             end
         elseif contains(curr_seq_name,'body') && (vcd == 's')
-            if PPos.(curr_seq_name){cc} == PPos.MT{1} - 1
+            if PPos.(curr_seq_name){cc} <= PPos.MT{1} - 1
                 inputs{2,1}{2,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.PD{1} - 1
+            if PPos.(curr_seq_name){cc} <= PPos.PD{1} - 1
                 inputs{3,1}{2,1} = char(nfi);
             end
-            if PPos.(curr_seq_name){cc} == PPos.T1{1} -1
+            if PPos.(curr_seq_name){cc} <= PPos.T1{1} -1
                 inputs{4,1}{2,1} = char(nfi);
             end
         elseif contains(curr_seq_name,'MT')
@@ -535,8 +563,8 @@ else
             str_val = {'ImaCoilString' 'ScanningSequence' 'SequenceVariant' ...
                 'SequenceName' 'PhaseEncodingDirection'};
         case {'head' 'body'}
-            num_val = {'SliceThickness' 'RepetitionTime' 'NumberOfAverages' ...
-                'NumberOfPhaseEncodingSteps' ...
+            num_val = {'SliceThickness' 'PixelSpacing' 'RepetitionTime' ...
+                'NumberOfAverages' 'NumberOfPhaseEncodingSteps' ...
                 'PercentSampling' 'PercentPhaseFieldOfView' 'MT'};
             str_val = {'ImaCoilString' 'ScanningSequence' 'SequenceVariant' ...
                 'SequenceName' 'PhaseEncodingDirection'};
